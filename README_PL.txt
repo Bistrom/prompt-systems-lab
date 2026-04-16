@@ -1,0 +1,1463 @@
+README_PL — 2026-04-16
+
+## 1. O tym pliku
+
+To jest większy polski dokument towarzyszący, złożony wyłącznie z materiałów dostarczonych w tej turze. Zawiera:
+- polskie omówienie postępu dnia,
+- wyjaśnienie logiki dokumentacyjnej i repozytoryjnej,
+- pełną treść finalnego `DAILY_LOG_2026-04-16.md`,
+- pełną treść `MERGED_SOURCES_2026-04-16.txt`.
+
+Nie został tu dodany żaden niesupplied rough draft dnia, żaden niedostarczony bundle promptów ani żadna fikcyjna treść repozytoryjna.
+
+## 2. Polski opis postępu dnia
+
+Dzisiejsza praca dotyczyła budowy rygorystycznego systemu dokumentacyjno-promptowego dla repozytorium `prompt-systems-lab`. Z dostarczonego materiału wynika, że wykonano przede wszystkim pracę nad logiką `daily_log`, nad operacyjną mapą workflow i commitów, nad rozdzieleniem funkcji `README` i `DAILY_LOG`, a także nad iteracyjnym poprawianiem promptów tak, by generowały poprawne artefakty repozytoryjne zamiast samych opisów.
+
+Najmocniej potwierdzone działania to:
+- odejście od modelu codziennie commitowanego `README.md` na rzecz datowanego `DAILY_LOG`,
+- doprecyzowanie, że `README_PL` ma być plikiem `.txt`,
+- utworzenie i rozwijanie rygorystycznego schematu `daily_log`,
+- utworzenie i rozwijanie mapy `COMMIT_WORKFLOW_MAP.md`,
+- iteracyjne poprawianie promptu generującego mapę workflow.
+
+Z materiału nie wynika odpowiedzialnie, że tego dnia wykonano realne przeniesienia plików między katalogami repozytorium, archiwizację, eksporty, zamknięcie sprintu albo sam commit. Materiał wspiera przede wszystkim projektowanie reguł, klasyfikacji i dyscypliny dokumentacyjnej.
+
+## 3. Jakie procesy zostały wykonane
+
+Na podstawie dostarczonych materiałów można odpowiedzialnie odtworzyć następujące procesy:
+
+1. Zmiana modelu dziennej dokumentacji:
+   odrzucono pomysł codziennego `README.md` i przeniesiono funkcję śledzenia pracy na datowany `DAILY_LOG`.
+
+2. Doprecyzowanie roli pliku towarzyszącego:
+   ustalono, że `README_PL` ma być scalonym plikiem `.txt`, a nie dokumentem `README.md`.
+
+3. Zaostrzenie reguł dokumentacyjnych:
+   rozwinięto schemat `daily_log`, aby blokował zgadywanie, wymuszał poziomy pewności i odróżniał statusy pracy od statusów artefaktów.
+
+4. Opracowanie logiki routingu repozytoryjnego:
+   rozwinięto mapę workflow rozróżniającą strefy takie jak `00_INBOX/`, `01_ACTIVE/`, `02_REPO_MATERIALS/`, `04_RESULTS/`, `06_EXPORTS/` i `07_ARCHIVE/`.
+
+5. Iteracyjna naprawa promptu generatora:
+   poprawiano prompt generujący mapę workflow, ponieważ wcześniejsza wersja mogła produkować opis zamiast właściwego pliku `.md`.
+
+6. Dalsza praca nad promptami meta-systemowymi:
+   materiał wspiera dalsze rozwijanie promptów związanych z generowaniem, walidacją, korektą i source-bound rekonstrukcją pracy dnia.
+
+## 4. Co z tego wynika dla repozytorium
+
+Repozytoryjnie najważniejsze było:
+- doprecyzowanie, czym ma być dzienny plik dowodowy,
+- ustalenie, że `README_PL` nie jest `README.md`, tylko osobnym plikiem `.txt`,
+- stworzenie podstawy do spójnego routingu artefaktów,
+- rozdzielenie materiałów aktywnych, metodologicznych, wynikowych, eksportowych i archiwalnych,
+- zachowanie ostrożności wobec fałszywej stabilizacji oraz fałszywego placementu.
+
+Jednocześnie materiał nie daje odpowiedzialnej podstawy, by twierdzić, że placement tych plików został już fizycznie wykonany w repozytorium. Wspierane są głównie placementy proponowane, a nie potwierdzone ruchy.
+
+## 5. Czego można się nauczyć z tego dnia
+
+Ten dzień pokazuje kilka ważnych zasad pracy:
+
+- Dokument strukturalny nie jest dowodem wykonania pracy.
+  `schemat_daily_log.md` narzuca kształt logu, ale nie może być używany jako źródło faktów o tym, co naprawdę zrobiono.
+
+- Mapa workflow nie jest README.
+  `COMMIT_WORKFLOW_MAP.md` pełni funkcję operacyjnej mapy routingu i lifecycle artefaktów, a nie zwykłego opisu projektu.
+
+- Trzeba oddzielać status artefaktu od jakości jego wyglądu.
+  To, że dokument jest spójny albo formalny, nie daje jeszcze podstawy do uznania go za ustabilizowaną metodologię.
+
+- Jawna luka jest lepsza niż fikcyjna kompletność.
+  Jeśli materiał nie potwierdza ruchu plików, eksportu lub commita, trzeba to zostawić jako niepewność.
+
+- `daily_log` ma być dokumentem dowodowym i operacyjnym.
+  Powinien wskazywać artefakt, operację, status, placement i commit relevance tylko wtedy, gdy materiał naprawdę to wspiera.
+
+## 6. Co jest pewne, co prawdopodobne, a co niepewne
+
+Pewne:
+- wykonano pracę nad logiką `daily_log`,
+- wykonano pracę nad `COMMIT_WORKFLOW_MAP.md`,
+- doprecyzowano rolę `README_PL.txt`,
+- poprawiano prompt generujący mapę workflow.
+
+Prawdopodobne, ale nie w pełni domknięte:
+- część promptów meta-systemowych i source-bound była rozwijana dalej i pozostaje aktywna,
+- placement metodologiczny dla części artefaktów jest sensowny, ale jeszcze niepotwierdzony jako finalny.
+
+Niepewne:
+- czy doszło do realnego ruchu plików między folderami repo,
+- czy powstał już osobny plik z promptami dziennymi,
+- czy wykonano faktyczny commit, eksport lub archiwizację,
+- czy pliki metodologiczne są już ustabilizowane, czy nadal pozostają aktywne.
+
+## 7. Pełna treść finalnego pliku DAILY_LOG_2026-04-16.md
+
+# DAILY LOG — 2026-04-16
+
+## 1. Zakres dnia
+
+Dzisiejsza praca dotyczyła budowy rygorystycznego systemu dokumentacyjno-promptowego dla repozytorium: doprecyzowania logiki `daily_log`, zaprojektowania operacyjnej mapy commit/workflow, rozstrzygnięcia relacji `README` vs `DAILY_LOG` oraz iteracyjnego poprawiania promptów tak, aby generowały właściwe artefakty kontrolne zamiast samych opisów.
+
+## 2. Praca faktycznie wykonana
+
+1. Przeanalizowano i zakwestionowano model, w którym `README.md` miałby być commitowany codziennie; w toku dnia przesunięto tę funkcję na `DAILY_LOG` z datą w nazwie
+   - **Status:** completed
+   - **Pewność:** wysoka
+
+2. Doprecyzowano, że `README_PL` ma mieć postać pliku `.txt`, a nie `.md`
+   - **Status:** completed
+   - **Pewność:** wysoka
+
+3. Ustalono, że osobny załącznik / zbiór promptów wykonanych danego dnia jest potrzebny do krzyżowego sprawdzania z `daily_log` i do osobnego umieszczania w repozytorium
+   - **Status:** completed
+   - **Pewność:** wysoka
+
+4. Opracowano i zaostrzono strukturalny schemat `daily_log`, w tym reguły statusów, placementu, poziomów pewności i sekcyjnej dyscypliny
+   - **Status:** completed
+   - **Pewność:** wysoka
+
+5. Opracowano operacyjną mapę repozytorium i commit workflow dla modelu, obejmującą routing artefaktów, lifecycle, commit relevance i integrację z `daily_log`
+   - **Status:** completed
+   - **Pewność:** wysoka
+
+6. Iteracyjnie poprawiano prompt generujący `COMMIT_WORKFLOW_MAP.md` tak, aby wymuszał pełny plik `.md`, a nie tylko opis struktury lub dokument operacyjny bez właściwego formatu plikowego
+   - **Status:** completed
+   - **Pewność:** wysoka
+
+7. Iteracyjnie poprawiano prompty meta-systemowe związane z generowaniem, walidacją i korektą promptów oraz z source-bound rekonstrukcją pracy dziennej
+   - **Status:** in progress
+   - **Pewność:** wysoka
+
+8. Doprecyzowano reguły hierarchii źródeł, konfliktu między źródłami i dyscypliny dokumentacyjnej dla dalszych artefaktów
+   - **Status:** completed
+   - **Pewność:** średnia
+
+## 3. Artefakty utworzone lub zmodyfikowane
+
+### 3.1. `schemat_daily_log.md` / `SCHEMAT_DAILY_LOG_STRICT`
+
+- **Artefakt:** `schemat_daily_log.md` / `SCHEMAT_DAILY_LOG_STRICT`
+  - **Typ:** template / metodologia strukturalna
+  - **Operacja:** utworzenie i modyfikacja
+  - **Status:** active
+  - **Pewność:** wysoka
+  - **Lokalizacja docelowa:** proposed: `02_REPO_MATERIALS/Methodology/`
+  - **Uzasadnienie placementu:** artefakt definiuje reguły operacyjne, statusy, placement i dyscyplinę `daily_log`; odpowiada materiałowi metodologicznemu, ale brak pewnej podstawy, że został już ustabilizowany jako obowiązujący standard
+  - **Commit relevance:** tak
+  - **Ruch:** brak
+  - **Uwagi:** plik ma rolę strukturalno-operacyjną i nie jest źródłem faktów o przebiegu dnia
+
+### 3.2. `COMMIT_WORKFLOW_MAP.md`
+
+- **Artefakt:** `COMMIT_WORKFLOW_MAP.md`
+  - **Typ:** workflow map / metodologia operacyjna
+  - **Operacja:** utworzenie i modyfikacja
+  - **Status:** active
+  - **Pewność:** wysoka
+  - **Lokalizacja docelowa:** proposed: `01_ACTIVE/Workflow_Maps/` lub po stabilizacji `02_REPO_MATERIALS/Methodology/`
+  - **Uzasadnienie placementu:** mapa workflow w fazie aktywnego projektowania należy do `01_ACTIVE/Workflow_Maps/`, a po ustabilizowaniu może wejść do `02_REPO_MATERIALS/Methodology/`; materiał nie daje dziś odpowiedzialnej podstawy, by twierdzić, że stabilizacja już zaszła
+  - **Commit relevance:** tak
+  - **Ruch:** brak
+  - **Uwagi:** artefakt ma sterować routingiem, commitami i śledzalnością, więc jego znaczenie repozytoryjne jest wysokie
+
+### 3.3. Prompt generujący `COMMIT_WORKFLOW_MAP.md`
+
+- **Artefakt:** prompt generujący `COMMIT_WORKFLOW_MAP.md`
+  - **Typ:** prompt / generator
+  - **Operacja:** modyfikacja iteracyjna
+  - **Status:** active
+  - **Pewność:** średnia
+  - **Lokalizacja docelowa:** proposed: `01_ACTIVE/Generator/`
+  - **Uzasadnienie placementu:** to aktywnie poprawiany prompt system generujący dokument strukturalny; zgodnie z mapą workflow takie systemy pozostają w strefie aktywnej do czasu stabilizacji
+  - **Commit relevance:** tak
+  - **Ruch:** brak
+  - **Uwagi:** materiał rozmowy pokazuje realne iteracje po błędzie polegającym na generowaniu opisu zamiast właściwego pliku
+
+### 3.4. Source-bound prompt do rekonstrukcji dnia / raportowania pod `daily_log`
+
+- **Artefakt:** source-bound prompt do rekonstrukcji dnia / raportowania pod `daily_log`
+  - **Typ:** prompt / source-bound
+  - **Operacja:** utworzenie lub rozwinięcie
+  - **Status:** active
+  - **Pewność:** średnia
+  - **Lokalizacja docelowa:** proposed: `01_ACTIVE/Source_Bound/`
+  - **Uzasadnienie placementu:** artefakt ma zachowywać ścisły związek ze źródłem i nie może swobodnie dopowiadać braków, więc odpowiada kategorii source-bound
+  - **Commit relevance:** tak
+  - **Ruch:** brak
+  - **Uwagi:** brak podstawy, by twierdzić, że jest już wersją ustabilizowaną
+
+## 4. Routing repozytoryjny / placement
+
+### 4.1. `schemat_daily_log.md`
+
+- **Artefakt:** `schemat_daily_log.md`
+  - **Placement:** `02_REPO_MATERIALS/Methodology/`
+  - **Status placementu:** proposed
+  - **Uzasadnienie:** to materiał normujący strukturę, statusy i zasady dokumentacji; odpowiada logice metodologicznej, ale brak dowodu finalnego zatwierdzenia
+  - **Pewność:** średnia
+
+### 4.2. `COMMIT_WORKFLOW_MAP.md`
+
+- **Artefakt:** `COMMIT_WORKFLOW_MAP.md`
+  - **Placement:** `01_ACTIVE/Workflow_Maps/` na etapie iteracji; docelowo możliwe `02_REPO_MATERIALS/Methodology/`
+  - **Status placementu:** proposed
+  - **Uzasadnienie:** logika workflow rozróżnia mapy aktywnie projektowane od ustabilizowanych map metodologicznych; dzisiejszy materiał wspiera istnienie mapy i jej użycie, ale nie potwierdza odpowiedzialnie finalnej stabilizacji
+  - **Pewność:** średnia
+
+### 4.3. Prompty generator / validator / repair / source-bound rozwijane dziś
+
+- **Artefakt:** prompty generator / validator / repair / source-bound rozwijane dziś
+  - **Placement:** odpowiednie podfoldery `01_ACTIVE/`
+  - **Status placementu:** proposed
+  - **Uzasadnienie:** logika workflow rozdziela aktywnie rozwijane systemy promptowe według funkcji; materiał rozmowy wspiera ich iterowanie, ale nie daje podstawy do przypisania wszystkich do konkretnych finalnych ścieżek plikowych
+  - **Pewność:** średnia
+
+## 5. Decyzje operacyjne i metodologiczne
+
+- Codzienny plik śledzący pracę ma być traktowany jako `DAILY_LOG`, a nie jako codziennie commitowany `README.md` — pewność: wysoka
+- `README_PL` ma być scalonym plikiem `.txt` — pewność: wysoka
+- Osobny załącznik z promptami wykonanymi danego dnia ma sens jako materiał do krzyżowej kontroli względem `daily_log` — pewność: wysoka
+- Dokument typu schema ma pełnić funkcję strukturalno-operacyjną, a nie źródłową; nie wolno traktować go jako dowodu wykonania pracy — pewność: wysoka
+- `COMMIT_WORKFLOW_MAP.md` ma być mapą operacyjną dla modelu, a nie zwykłym opisem struktury repozytorium — pewność: wysoka
+- W dokumentacji i promptach ma obowiązywać jawne rozróżnienie między faktami dnia, regułami strukturalnymi i logiką placementu / commit relevance — pewność: średnia
+
+## 6. Zmiany commit-relevant
+
+### 6.1. Utworzenie i doprecyzowanie `schemat_daily_log.md`
+
+- **Opis zmiany:** utworzenie i doprecyzowanie `schemat_daily_log.md`
+  - **Powód commit relevance:** zmienia reguły dokumentowania pracy, statusowania, ujawniania niepewności i minimalnego standardu wpisu
+  - **Obszar repo:** metodologia / dokumentacja operacyjna
+  - **Pewność:** wysoka
+
+### 6.2. Utworzenie i doprecyzowanie `COMMIT_WORKFLOW_MAP.md`
+
+- **Opis zmiany:** utworzenie i doprecyzowanie `COMMIT_WORKFLOW_MAP.md`
+  - **Powód commit relevance:** zmienia routing artefaktów, logikę placementu, lifecycle, integrację z `daily_log` i ocenę istotności commitowej
+  - **Obszar repo:** workflow / metodologia repozytoryjna
+  - **Pewność:** wysoka
+
+### 6.3. Zmiana koncepcji z dziennego `README.md` na `DAILY_LOG`
+
+- **Opis zmiany:** zmiana koncepcji z dziennego `README.md` na `DAILY_LOG`
+  - **Powód commit relevance:** to zmiana modelu śledzalności pracy i sposobu prowadzenia dziennej dokumentacji
+  - **Obszar repo:** governance / logika dokumentacji
+  - **Pewność:** wysoka
+
+### 6.4. Iteracyjne poprawienie promptu generującego mapę workflow tak, aby produkował właściwy plik, a nie tylko opis
+
+- **Opis zmiany:** iteracyjne poprawienie promptu generującego mapę workflow tak, aby produkował właściwy plik, a nie tylko opis
+  - **Powód commit relevance:** to korekta wpływająca bezpośrednio na zdolność systemu do wytwarzania poprawnych artefaktów repozytoryjnych
+  - **Obszar repo:** aktywny system generatora
+  - **Pewność:** wysoka
+
+## 7. Niepewności i nierozstrzygnięte punkty
+
+- Nie ma odpowiedzialnej podstawy, by twierdzić, że `schemat_daily_log.md` i `COMMIT_WORKFLOW_MAP.md` są już materiałami w pełni ustabilizowanymi; dzisiejszy materiał wspiera raczej status `active` niż `stabilized`.
+- Nie ma odpowiedzialnej podstawy, by twierdzić, że dziś doszło do faktycznego ruchu plików między strefami repozytorium; materiał wspiera głównie logikę placementu i placement proponowany, nie potwierdzone przeniesienia.
+- Nie ma odpowiedzialnej podstawy, by twierdzić, że wykonano dziś archiwizację, eksport, zamknięcie sprintu albo faktyczny commit; materiał wspiera projektowanie tych reguł, nie ich wykonanie.
+- Część promptów rozwijanych dziś jest wyraźnie obecna funkcjonalnie, ale ich dokładne nazwy plikowe i finalne ścieżki repozytoryjne nie są w materiale jednoznacznie ujawnione.
+- Nie da się odpowiedzialnie rozstrzygnąć, czy osobny załącznik z promptami dziennymi został już dziś utworzony jako konkretny plik, czy dopiero został uznany za potrzebny.
+
+## 8. Pełna treść pliku MERGED_SOURCES_2026-04-16.txt
+
+================================================================================
+SOURCE ORDER: 1
+SOURCE CATEGORY: AI-GENERATED DAILY SUMMARY
+SUPPLIED FILENAME: RAPORT_POSTEPOW_2026-04-16__markdown_optimized.md
+================================================================================
+
+# RAPORT POSTĘPÓW — 2026-04-16
+
+## 1. Zakres dnia
+
+Dzisiejsza praca dotyczyła budowy rygorystycznego systemu dokumentacyjno-promptowego dla repozytorium: doprecyzowania logiki `daily_log`, zaprojektowania operacyjnej mapy commit/workflow, rozstrzygnięcia relacji `README` vs `DAILY_LOG` oraz iteracyjnego poprawiania promptów tak, aby generowały właściwe artefakty kontrolne zamiast samych opisów.
+
+## 2. Praca faktycznie wykonana
+
+1. Przeanalizowano i zakwestionowano model, w którym `README.md` miałby być commitowany codziennie; w toku dnia przesunięto tę funkcję na `DAILY_LOG` z datą w nazwie
+   - **Status:** completed
+   - **Pewność:** wysoka
+
+2. Doprecyzowano, że `README_PL` ma mieć postać pliku `.txt`, a nie `.md`
+   - **Status:** completed
+   - **Pewność:** wysoka
+
+3. Ustalono, że osobny załącznik / zbiór promptów wykonanych danego dnia jest potrzebny do krzyżowego sprawdzania z `daily_log` i do osobnego umieszczania w repozytorium
+   - **Status:** completed
+   - **Pewność:** wysoka
+
+4. Opracowano i zaostrzono strukturalny schemat `daily_log`, w tym reguły statusów, placementu, poziomów pewności i sekcyjnej dyscypliny
+   - **Status:** completed
+   - **Pewność:** wysoka
+
+5. Opracowano operacyjną mapę repozytorium i commit workflow dla modelu, obejmującą routing artefaktów, lifecycle, commit relevance i integrację z `daily_log`
+   - **Status:** completed
+   - **Pewność:** wysoka
+
+6. Iteracyjnie poprawiano prompt generujący `COMMIT_WORKFLOW_MAP.md` tak, aby wymuszał pełny plik `.md`, a nie tylko opis struktury lub dokument operacyjny bez właściwego formatu plikowego
+   - **Status:** completed
+   - **Pewność:** wysoka
+
+7. Iteracyjnie poprawiano prompty meta-systemowe związane z generowaniem, walidacją i korektą promptów oraz z source-bound rekonstrukcją pracy dziennej
+   - **Status:** in progress
+   - **Pewność:** wysoka
+
+8. Doprecyzowano reguły hierarchii źródeł, konfliktu między źródłami i dyscypliny dokumentacyjnej dla dalszych artefaktów
+   - **Status:** completed
+   - **Pewność:** średnia
+
+## 3. Artefakty utworzone lub zmodyfikowane
+
+### 3.1. `schemat_daily_log.md` / `SCHEMAT_DAILY_LOG_STRICT`
+
+- **Artefakt:** `schemat_daily_log.md` / `SCHEMAT_DAILY_LOG_STRICT`
+- **Typ:** template / metodologia strukturalna
+- **Operacja:** utworzenie i modyfikacja
+- **Status:** active
+- **Pewność:** wysoka
+- **Lokalizacja docelowa:** proposed: `02_REPO_MATERIALS/Methodology/`
+- **Uzasadnienie placementu:** artefakt definiuje reguły operacyjne, statusy, placement i dyscyplinę `daily_log`; odpowiada materiałowi metodologicznemu, ale brak pewnej podstawy, że został już ustabilizowany jako obowiązujący standard
+- **Commit relevance:** tak
+- **Ruch:** brak
+- **Uwagi:** plik ma rolę strukturalno-operacyjną i nie jest źródłem faktów o przebiegu dnia
+
+### 3.2. `COMMIT_WORKFLOW_MAP.md`
+
+- **Artefakt:** `COMMIT_WORKFLOW_MAP.md`
+- **Typ:** workflow map / metodologia operacyjna
+- **Operacja:** utworzenie i modyfikacja
+- **Status:** active
+- **Pewność:** wysoka
+- **Lokalizacja docelowa:** proposed: `01_ACTIVE/Workflow_Maps/` lub po stabilizacji `02_REPO_MATERIALS/Methodology/`
+- **Uzasadnienie placementu:** mapa workflow w fazie aktywnego projektowania należy do `01_ACTIVE/Workflow_Maps/`, a po ustabilizowaniu może wejść do `02_REPO_MATERIALS/Methodology/`; materiał nie daje dziś odpowiedzialnej podstawy, by twierdzić, że stabilizacja już zaszła
+- **Commit relevance:** tak
+- **Ruch:** brak
+- **Uwagi:** artefakt ma sterować routingiem, commitami i śledzalnością, więc jego znaczenie repozytoryjne jest wysokie
+
+### 3.3. Prompt generujący `COMMIT_WORKFLOW_MAP.md`
+
+- **Artefakt:** prompt generujący `COMMIT_WORKFLOW_MAP.md`
+- **Typ:** prompt / generator
+- **Operacja:** modyfikacja iteracyjna
+- **Status:** active
+- **Pewność:** średnia
+- **Lokalizacja docelowa:** proposed: `01_ACTIVE/Generator/`
+- **Uzasadnienie placementu:** to aktywnie poprawiany prompt system generujący dokument strukturalny; zgodnie z mapą workflow takie systemy pozostają w strefie aktywnej do czasu stabilizacji
+- **Commit relevance:** tak
+- **Ruch:** brak
+- **Uwagi:** materiał rozmowy pokazuje realne iteracje po błędzie polegającym na generowaniu opisu zamiast właściwego pliku
+
+### 3.4. Source-bound prompt do rekonstrukcji dnia / raportowania pod `daily_log`
+
+- **Artefakt:** source-bound prompt do rekonstrukcji dnia / raportowania pod `daily_log`
+- **Typ:** prompt / source-bound
+- **Operacja:** utworzenie lub rozwinięcie
+- **Status:** active
+- **Pewność:** średnia
+- **Lokalizacja docelowa:** proposed: `01_ACTIVE/Source_Bound/`
+- **Uzasadnienie placementu:** artefakt ma zachowywać ścisły związek ze źródłem i nie może swobodnie dopowiadać braków, więc odpowiada kategorii source-bound
+- **Commit relevance:** tak
+- **Ruch:** brak
+- **Uwagi:** brak podstawy, by twierdzić, że jest już wersją ustabilizowaną
+
+## 4. Routing repozytoryjny / placement
+
+### 4.1. `schemat_daily_log.md`
+
+- **Placement:** `02_REPO_MATERIALS/Methodology/`
+- **Status placementu:** proposed
+- **Uzasadnienie:** to materiał normujący strukturę, statusy i zasady dokumentacji; odpowiada logice metodologicznej, ale brak dowodu finalnego zatwierdzenia
+- **Pewność:** średnia
+
+### 4.2. `COMMIT_WORKFLOW_MAP.md`
+
+- **Placement:** `01_ACTIVE/Workflow_Maps/` na etapie iteracji; docelowo możliwe `02_REPO_MATERIALS/Methodology/`
+- **Status placementu:** proposed
+- **Uzasadnienie:** logika workflow rozróżnia mapy aktywnie projektowane od ustabilizowanych map metodologicznych; dzisiejszy materiał wspiera istnienie mapy i jej użycie, ale nie potwierdza odpowiedzialnie finalnej stabilizacji
+- **Pewność:** średnia
+
+### 4.3. Prompty generator / validator / repair / source-bound rozwijane dziś
+
+- **Placement:** odpowiednie podfoldery `01_ACTIVE/`
+- **Status placementu:** proposed
+- **Uzasadnienie:** logika workflow rozdziela aktywnie rozwijane systemy promptowe według funkcji; materiał rozmowy wspiera ich iterowanie, ale nie daje podstawy do przypisania wszystkich do konkretnych finalnych ścieżek plikowych
+- **Pewność:** średnia
+
+## 5. Decyzje operacyjne i metodologiczne
+
+- Codzienny plik śledzący pracę ma być traktowany jako `DAILY_LOG`, a nie jako codziennie commitowany `README.md` — pewność: wysoka
+- `README_PL` ma być scalonym plikiem `.txt` — pewność: wysoka
+- Osobny załącznik z promptami wykonanymi danego dnia ma sens jako materiał do krzyżowej kontroli względem `daily_log` — pewność: wysoka
+- Dokument typu schema ma pełnić funkcję strukturalno-operacyjną, a nie źródłową; nie wolno traktować go jako dowodu wykonania pracy — pewność: wysoka
+- `COMMIT_WORKFLOW_MAP.md` ma być mapą operacyjną dla modelu, a nie zwykłym opisem struktury repozytorium — pewność: wysoka
+- W dokumentacji i promptach ma obowiązywać jawne rozróżnienie między faktami dnia, regułami strukturalnymi i logiką placementu / commit relevance — pewność: średnia
+
+## 6. Zmiany commit-relevant
+
+### 6.1. Utworzenie i doprecyzowanie `schemat_daily_log.md`
+
+- **Powód commit relevance:** zmienia reguły dokumentowania pracy, statusowania, ujawniania niepewności i minimalnego standardu wpisu
+- **Obszar repo:** metodologia / dokumentacja operacyjna
+- **Pewność:** wysoka
+
+### 6.2. Utworzenie i doprecyzowanie `COMMIT_WORKFLOW_MAP.md`
+
+- **Powód commit relevance:** zmienia routing artefaktów, logikę placementu, lifecycle, integrację z `daily_log` i ocenę istotności commitowej
+- **Obszar repo:** workflow / metodologia repozytoryjna
+- **Pewność:** wysoka
+
+### 6.3. Zmiana koncepcji z dziennego `README.md` na `DAILY_LOG`
+
+- **Powód commit relevance:** to zmiana modelu śledzalności pracy i sposobu prowadzenia dziennej dokumentacji
+- **Obszar repo:** governance / logika dokumentacji
+- **Pewność:** wysoka
+
+### 6.4. Iteracyjne poprawienie promptu generującego mapę workflow tak, aby produkował właściwy plik, a nie tylko opis
+
+- **Powód commit relevance:** to korekta wpływająca bezpośrednio na zdolność systemu do wytwarzania poprawnych artefaktów repozytoryjnych
+- **Obszar repo:** aktywny system generatora
+- **Pewność:** wysoka
+
+## 7. Niepewności i nierozstrzygnięte punkty
+
+- Nie ma odpowiedzialnej podstawy, by twierdzić, że `schemat_daily_log.md` i `COMMIT_WORKFLOW_MAP.md` są już materiałami w pełni ustabilizowanymi; dzisiejszy materiał wspiera raczej status `active` niż `stabilized`
+- Nie ma odpowiedzialnej podstawy, by twierdzić, że dziś doszło do faktycznego ruchu plików między strefami repozytorium; materiał wspiera głównie logikę placementu i placement proponowany, nie potwierdzone przeniesienia
+- Nie ma odpowiedzialnej podstawy, by twierdzić, że wykonano dziś archiwizację, eksport, zamknięcie sprintu albo faktyczny commit; materiał wspiera projektowanie tych reguł, nie ich wykonanie
+- Część promptów rozwijanych dziś jest wyraźnie obecna funkcjonalnie, ale ich dokładne nazwy plikowe i finalne ścieżki repozytoryjne nie są w materiale jednoznacznie ujawnione
+- Nie da się odpowiedzialnie rozstrzygnąć, czy osobny załącznik z promptami dziennymi został już dziś utworzony jako konkretny plik, czy dopiero został uznany za potrzebny
+
+================================================================================
+SOURCE ORDER: 2
+SOURCE CATEGORY: STABLE PROJECT SOURCE FILE
+SUPPLIED FILENAME: schemat_daily_log.md
+================================================================================
+
+# SCHEMAT_DAILY_LOG_STRICT
+
+## 1. Status i rola pliku
+
+Ten plik jest **rygorystycznym szablonem strukturalnym** dla dziennego pliku `DAILY_LOG_YYYY-MM-DD.md`.
+
+Nie jest źródłem faktów o przebiegu dnia.
+Nie jest streszczeniem pracy.
+Nie jest dokumentem prezentacyjnym.
+Nie wolno używać go do dopowiadania brakujących działań, wygładzania niejasności ani podnoszenia statusu wykonania.
+
+Jego funkcja jest wyłącznie strukturalno-operacyjna:
+- narzuca układ `daily_log`,
+- wymusza śledzalność artefaktów,
+- wymusza rozróżnienie statusów operacyjnych,
+- wymusza odnotowanie placementu repozytoryjnego, gdy materiał to wspiera,
+- wymusza jawne oznaczanie niepewności,
+- blokuje fikcyjne domykanie dokumentacji.
+
+Jeżeli materiał źródłowy nie daje podstawy do wypełnienia sekcji, sekcję należy:
+- pominąć,
+- albo oznaczyć jako niewspartą materiałem,
+- ale nigdy nie wolno jej wypełniać domysłem.
+
+---
+
+## 2. Reguła nadrzędna
+
+`daily_log` ma być dokumentem **dowodowym i operacyjnym**, nie narracyjnym.
+
+To oznacza, że każdy wpis ma odpowiadać na możliwie dużą część poniższych pytań, jeśli materiał źródłowy na to pozwala:
+- **Co** powstało, zostało zmienione, sklasyfikowane, przeniesione albo odrzucone?
+- **Na jakim artefakcie** wykonano działanie?
+- **Jaki jest status operacyjny** tego artefaktu lub pracy?
+- **Gdzie** artefakt został umieszczony lub gdzie powinien zostać umieszczony?
+- **Dlaczego** trafił właśnie tam?
+- **Czy** zmiana jest commit-relevant?
+- **Czy** status, placement lub interpretacja są pewne?
+
+Jeżeli na któreś pytanie nie da się odpowiedzieć odpowiedzialnie na podstawie materiału, należy to oznaczyć zamiast zgadywać.
+
+---
+
+## 3. Reguły twarde
+
+### 3.1. Czego bezwzględnie nie wolno robić
+
+Nie wolno:
+- przedstawiać planu jako wykonania,
+- przedstawiać omówienia jako rezultatu,
+- przedstawiać szkicu jako materiału stabilnego,
+- przedstawiać testu jako wyniku końcowego,
+- przedstawiać eksportu jako substytutu materiału źródłowego,
+- przedstawiać estetycznie wyglądającego dokumentu jako metodologii tylko dlatego, że jest dobrze napisany,
+- dopisywać „następnych kroków”, jeśli nie wynikają z materiału,
+- wypełniać pustych sekcji ogólnikami,
+- ukrywać konfliktów źródłowych,
+- zacierać niepewności językiem pozornej pewności,
+- zgadywać placementu repozytoryjnego,
+- zgadywać commit relevance.
+
+### 3.2. Minimalny standard wpisu
+
+Każdy wpis merytoryczny w `daily_log` musi, jeśli materiał na to pozwala, zawierać przynajmniej:
+- identyfikację artefaktu albo jednoznaczny opis przedmiotu pracy,
+- opis operacji,
+- status,
+- poziom pewności.
+
+Jeżeli materiał wspiera większą szczegółowość, wpis powinien dodatkowo zawierać:
+- placement repozytoryjny,
+- uzasadnienie placementu,
+- commit relevance,
+- zmianę statusu lub ruch między strefami repozytorium.
+
+### 3.3. Preferencja jawnej luki
+
+Jeżeli materiał jest niepełny, log ma pozostać niepełny, ale uczciwy.
+
+Zasada nadrzędna:
+**jawna luka jest lepsza niż fikcyjna kompletność**.
+
+---
+
+## 4. Dozwolone statusy operacyjne
+
+Używaj wyłącznie statusów wspartych materiałem.
+Nie awansuj statusu bez podstaw.
+
+### 4.1. Statusy pracy
+
+- **planned** — zamierzone, ale niewykonane.
+- **started** — rozpoczęte.
+- **in progress** — aktywnie rozwijane.
+- **partially completed** — wykonane częściowo.
+- **tested** — przetestowane.
+- **completed** — ukończone.
+
+### 4.2. Statusy artefaktowe
+
+- **draft** — szkic / wersja robocza.
+- **active** — materiał aktywnie rozwijany.
+- **stabilized** — materiał ustabilizowany jako obowiązujący lub względnie dojrzały.
+- **exported** — wygenerowano gotowy plik wyjściowy.
+- **archived** — przeniesiono do archiwum.
+- **rejected** — odrzucono.
+- **uncertain** — brak odpowiedzialnej podstawy do mocniejszej klasyfikacji.
+
+### 4.3. Statusy placementu
+
+- **placed** — placement ustalony odpowiedzialnie.
+- **proposed** — placement tylko proponowany lub roboczo sugerowany.
+- **unknown** — placement nieustalony.
+
+---
+
+## 5. Poziomy pewności
+
+Każdy istotny wpis powinien, jeśli to możliwe, zawierać poziom pewności.
+
+Używaj tylko tych trzech poziomów:
+- **wysoka** — materiał źródłowy jednoznacznie wspiera twierdzenie,
+- **średnia** — twierdzenie wynika logicznie z materiału, ale nie jest wyrażone całkowicie wprost,
+- **niska** — materiał daje tylko słabą podstawę; należy zachować ostrożność albo przenieść problem do sekcji niepewności.
+
+Jeżeli pewność jest niska i temat dotyczy:
+- statusu ukończenia,
+- placementu repozytoryjnego,
+- commit relevance,
+- stabilizacji materiału,
+
+należy domyślnie preferować słabszy opis zamiast mocniejszego.
+
+---
+
+## 6. Reguły sekcyjne
+
+### 6.1. Sekcje obowiązkowe logicznie
+
+Następujące sekcje są domyślnym szkieletem `daily_log`, ale każda z nich pojawia się **tylko wtedy, gdy istnieje materiałowa podstawa**:
+
+1. `Zakres dnia`
+2. `Praca faktycznie wykonana`
+3. `Artefakty utworzone lub zmodyfikowane`
+4. `Routing repozytoryjny / placement`
+5. `Ruch artefaktów i zmiany statusu`
+6. `Decyzje operacyjne i metodologiczne`
+7. `Zmiany commit-relevant`
+8. `Niepewności i nierozstrzygnięte punkty`
+9. `Następne kroki`
+
+### 6.2. Zasada pojawiania się sekcji
+
+Sekcja ma się pojawić tylko wtedy, gdy spełniony jest odpowiedni warunek:
+
+- `Zakres dnia` — jeśli da się odpowiedzialnie określić, czego dotyczyła praca.
+- `Praca faktycznie wykonana` — jeśli da się wskazać realne działania wykonane danego dnia.
+- `Artefakty utworzone lub zmodyfikowane` — jeśli powstały lub zostały zmienione konkretne artefakty.
+- `Routing repozytoryjny / placement` — jeśli materiał pozwala odpowiedzialnie wskazać placement lub problem placementu.
+- `Ruch artefaktów i zmiany statusu` — jeśli nastąpiło realne przejście, klasyfikacja, archiwizacja, stabilizacja albo eksport.
+- `Decyzje operacyjne i metodologiczne` — jeśli zapadły decyzje wpływające na system pracy, strukturę repo albo dokumentację.
+- `Zmiany commit-relevant` — jeśli istnieją zmiany mające realną wagę commitową.
+- `Niepewności i nierozstrzygnięte punkty` — jeśli występują konflikty, luki, niejednoznaczności lub nierozstrzygnięte klasyfikacje.
+- `Następne kroki` — tylko wtedy, gdy wynikają z materiału źródłowego, a nie z chęci domknięcia dokumentu.
+
+### 6.3. Zasada pomijania sekcji
+
+Jeżeli sekcja nie ma podstawy materiałowej, należy ją **usunąć z finalnego `daily_log`**, zamiast zostawiać pustą ozdobną ramę.
+
+Wyjątek:
+sekcję `Niepewności i nierozstrzygnięte punkty` wolno zachować nawet przy małej objętości, jeśli pełni ważną funkcję ostrzegawczą.
+
+---
+
+## 7. Reguły wpisów artefaktowych
+
+Każdy artefakt opisuj, jeśli materiał na to pozwala, w możliwie jednolitym formacie.
+
+### 7.1. Format minimalny
+
+- **Artefakt:**
+- **Typ:**
+- **Operacja:**
+- **Status:**
+- **Pewność:**
+
+### 7.2. Format rozszerzony
+
+Dodaj także, jeśli materiał to wspiera:
+- **Lokalizacja docelowa:**
+- **Uzasadnienie placementu:**
+- **Commit relevance:** tak / nie / niejednoznaczne
+- **Ruch:** `from -> to`
+- **Uwagi:**
+
+### 7.3. Zakaz rozwlekłości
+
+Wpis nie ma być eseistyczny.
+Ma być precyzyjny i operacyjny.
+
+### 7.4. Zakaz ogólników
+
+Nie pisz:
+- „pracowano nad promptem”,
+- „zorganizowano pliki”,
+- „dodano dokumentację”,
+
+jeżeli materiał pozwala napisać dokładniej.
+
+---
+
+## 8. Reguły routingu repozytoryjnego
+
+Jeżeli materiał źródłowy oraz aktualne pliki projektowe wspierają klasyfikację, należy odnotować placement zgodnie z ich funkcją operacyjną.
+
+### 8.1. Co należy śledzić szczególnie
+
+Śledź zwłaszcza:
+- wejście nowego materiału do obiegu,
+- przejście z `00_INBOX/` do folderu właściwego,
+- przejście z `01_ACTIVE/` do `02_REPO_MATERIALS/`,
+- przejście z `01_ACTIVE/` do `04_RESULTS/`,
+- utworzenie artefaktów eksportowych,
+- archiwizację,
+- odrzucenie,
+- zmianę materiału z aktywnego na stabilny.
+
+### 8.2. Gdy placement jest niepewny
+
+Jeżeli placement jest niepewny:
+- nie zgaduj,
+- nie wpisuj fałszywie precyzyjnej ścieżki,
+- oznacz problem jako nierozstrzygnięty,
+- w razie potrzeby użyj statusu `proposed` albo `unknown`.
+
+---
+
+## 9. Reguły commit relevance
+
+Nie każdy ruch lub szkic jest równie ważny commitowo.
+
+### 9.1. Kiedy oznaczać jako commit-relevant
+
+Oznacz jako commit-relevant tylko wtedy, gdy materiał wskazuje, że zmiana:
+- reprezentuje realny postęp,
+- zmienia logikę systemu,
+- stabilizuje metodologię,
+- tworzy raport, wynik lub eksport o wartości projektowej,
+- wpływa na strukturę repozytorium,
+- zmienia workflow, routing lub reguły pracy.
+
+### 9.2. Kiedy nie zawyżać commit relevance
+
+Nie zawyżaj commit relevance dla:
+- przypadkowych mikro-szkiców,
+- chaotycznych notatek bez znaczenia odtworzeniowego,
+- materiałów o nieustalonym statusie,
+- samych ruchów technicznych bez znaczenia organizacyjnego,
+- wtórnych eksportów bez znaczenia repozytoryjnego.
+
+### 9.3. Gdy commit relevance jest niepewna
+
+Zapisz to jawnie jako:
+- `niejednoznaczne`,
+- albo opisz w sekcji niepewności.
+
+---
+
+## 10. Matryca decyzji dla modelu
+
+### 10.1. Jeżeli materiał mówi tylko o zamiarze
+
+Wpisz to jako `planned`.
+Nie używaj `started`, `in progress` ani `completed`.
+
+### 10.2. Jeżeli materiał mówi o rozpoczęciu, ale bez wyniku
+
+Użyj `started` albo `in progress`.
+Nie używaj `completed`.
+
+### 10.3. Jeżeli materiał mówi o testowaniu
+
+Oznacz pracę lub artefakt jako `tested`, chyba że istnieją mocne podstawy do dodatkowego statusu.
+Sam test nie oznacza jeszcze stabilizacji ani ukończenia.
+
+### 10.4. Jeżeli materiał mówi o gotowym pliku wyjściowym
+
+Można użyć `exported`, ale nie wolno z tego automatycznie wywodzić, że materiał źródłowy jest metodologicznie stabilny.
+
+### 10.5. Jeżeli materiał wygląda formalnie, ale brak dowodu stabilizacji
+
+Pozostaw status `draft`, `active` albo `uncertain`.
+Nie awansuj do `stabilized` bez podstaw.
+
+### 10.6. Jeżeli istnieje konflikt źródeł
+
+- preferuj źródło wyższego priorytetu,
+- zachowaj konflikt widoczny,
+- nie wygładzaj go narracyjnie,
+- odnotuj nierozstrzygnięty punkt, jeśli nie da się go odpowiedzialnie zamknąć.
+
+---
+
+## 11. Wzorzec finalnego pliku `DAILY_LOG_YYYY-MM-DD.md`
+
+Poniżej znajduje się wzorzec docelowej struktury. Model ma używać tylko tych sekcji, które mają podstawę materiałową.
+
+```md
+# DAILY LOG — YYYY-MM-DD
+
+## 1. Zakres dnia
+Krótki, rzeczowy opis głównego obszaru pracy danego dnia.
+Tylko to, co da się odpowiedzialnie ustalić z materiałów.
+
+## 2. Praca faktycznie wykonana
+- [opis działania] — status: [planned / started / in progress / partially completed / tested / completed] — pewność: [wysoka / średnia / niska]
+- [opis działania] — status: [...] — pewność: [...]
+
+## 3. Artefakty utworzone lub zmodyfikowane
+- **Artefakt:** `nazwa_pliku_lub_systemu`
+  - **Typ:** [prompt / workflow map / template / report / export / inny]
+  - **Operacja:** [utworzenie / modyfikacja / przeniesienie / stabilizacja / eksport / archiwizacja / odrzucenie]
+  - **Status:** [draft / active / stabilized / exported / archived / rejected / uncertain]
+  - **Pewność:** [wysoka / średnia / niska]
+  - **Lokalizacja docelowa:** [ścieżka / proposed / unknown]
+  - **Uzasadnienie placementu:** [krótko i rzeczowo]
+  - **Commit relevance:** [tak / nie / niejednoznaczne]
+  - **Ruch:** [`from -> to`] lub `brak`
+  - **Uwagi:** [opcjonalnie]
+
+## 4. Routing repozytoryjny / placement
+- **Artefakt:** `...`
+  - **Placement:** `...`
+  - **Status placementu:** [placed / proposed / unknown]
+  - **Uzasadnienie:** ...
+  - **Pewność:** [wysoka / średnia / niska]
+
+## 5. Ruch artefaktów i zmiany statusu
+- `from -> to`
+  - **Artefakt:** `...`
+  - **Zmiana statusu:** [np. active -> stabilized]
+  - **Powód:** ...
+  - **Commit relevance:** [tak / nie / niejednoznaczne]
+  - **Pewność:** [wysoka / średnia / niska]
+
+## 6. Decyzje operacyjne i metodologiczne
+- [decyzja] — pewność: [wysoka / średnia / niska]
+- [decyzja] — pewność: [...]
+
+## 7. Zmiany commit-relevant
+- [opis zmiany]
+  - **Powód commit relevance:** ...
+  - **Obszar repo:** ...
+  - **Pewność:** [wysoka / średnia / niska]
+
+## 8. Niepewności i nierozstrzygnięte punkty
+- [opis konfliktu / luki / niejednoznaczności]
+- [opis konfliktu / luki / niejednoznaczności]
+
+## 9. Następne kroki
+- [krok wynikający z materiału]
+- [krok wynikający z materiału]
+```
+
+---
+
+## 12. Wzorzec skrócony dla dni ubogich w materiał
+
+Jeżeli dzień jest słabo udokumentowany, wolno użyć wersji skróconej, ale nadal bez fikcji:
+
+```md
+# DAILY LOG — YYYY-MM-DD
+
+## 1. Zakres dnia
+[tylko jeśli da się ustalić]
+
+## 2. Praca faktycznie wykonana
+- [działanie] — status: [...] — pewność: [...]
+
+## 3. Niepewności i nierozstrzygnięte punkty
+- [co pozostaje niejasne]
+```
+
+Ta wersja skrócona nie jest „gorsza”.
+Jest poprawna wtedy, gdy materiał źródłowy nie wspiera bogatszej struktury.
+
+---
+
+## 13. Wzorce zdań dozwolonych
+
+Dla zachowania dyscypliny można używać takich konstrukcji:
+
+- `Utworzono roboczy artefakt ...`
+- `Rozwinięto aktywną wersję ...`
+- `Przygotowano szkic ...`
+- `Przetestowano ...`
+- `Ustabilizowano materiał ...`
+- `Odnotowano niejednoznaczność dotyczącą ...`
+- `Nie da się odpowiedzialnie rozstrzygnąć ...`
+- `Materiał wspiera tylko status ...`
+- `Placement pozostaje proponowany, a nie pewny.`
+
+---
+
+## 14. Wzorce zdań zakazanych
+
+Nie używaj takich konstrukcji bez mocnej podstawy materiałowej:
+
+- `Ukończono system ...`
+- `Zamknięto pracę nad ...`
+- `Artefakt jest stabilną metodologią ...`
+- `Plik należy do ...`
+- `Zmiana jest na pewno commit-relevant ...`
+- `Zakończono etap ...`
+
+jeżeli materiał źródłowy tego nie potwierdza.
+
+---
+
+## 15. Reguła końcowa
+
+Ten szablon ma wymuszać pięć rzeczy:
+- śledzalność,
+- precyzję,
+- uczciwość dokumentacyjną,
+- zgodność z routingiem repozytorium,
+- preferencję jawnej niepewności nad pozorną kompletnością.
+
+Jeżeli materiał źródłowy jest mocny, log ma być bogaty i precyzyjny.
+Jeżeli materiał źródłowy jest słaby, log ma być oszczędny, ale uczciwy.
+Nigdy odwrotnie.
+
+================================================================================
+SOURCE ORDER: 3
+SOURCE CATEGORY: STABLE PROJECT SOURCE FILE
+SUPPLIED FILENAME: COMMIT_WORKFLOW_MAP.md
+================================================================================
+
+# COMMIT_WORKFLOW_MAP
+
+## 1. Cel pliku
+
+Ten plik definiuje operacyjną mapę repozytorium dla modelu, który ma tworzyć spójne commity, prawidłowo rozmieszczać artefakty i utrzymywać śledzalność dzienną poprzez `daily_log`.
+
+Celem tego pliku nie jest opis projektu dla człowieka w sensie prezentacyjnym. Celem jest narzucenie jednoznacznych reguł roboczych, aby model wiedział:
+
+- gdzie umieścić nowy artefakt,
+- kiedy materiał jest jeszcze roboczy, a kiedy staje się wynikiem,
+- co powinno zostać odnotowane w `daily_log`,
+- co jest istotne commitowo,
+- czego nie wolno mieszać,
+- kiedy materiał należy przenieść do `04_RESULTS`, `06_EXPORTS` albo `07_ARCHIVE`.
+
+Ten plik ma redukować improwizację. Jeżeli klasyfikacja artefaktu nie jest pewna, model ma stosować reguły z tego dokumentu zamiast zgadywać.
+
+## 2. Rola systemowa w projekcie
+
+Struktura repozytorium pełni funkcję systemu routingu pracy. Nie jest neutralnym układem folderów. Każdy katalog odpowiada innemu statusowi operacyjnemu materiału i innej relacji tego materiału do commitów, wyników, testów, eksportów oraz archiwizacji.
+
+Model pracujący w tym projekcie ma działać według następującej logiki:
+
+- **Przyjęcie materiału** — nowe, nieskategoryzowane wejścia trafiają do strefy przyjęcia.
+- **Praca aktywna** — materiały rozwijane, poprawiane, walidowane lub mapowane trafiają do strefy roboczej.
+- **Materiały repozytoryjne** — rzeczy stabilne, metodologiczne, opisowe lub referencyjne trafiają do strefy materiałów repo.
+- **Dane testowe** — przypadki, słabe prompty, briefy i feedback do sprawdzania systemu trafiają do strefy testowej.
+- **Wyniki** — raporty, porównania, scorecards i raporty błędów trafiają do strefy wyników.
+- **Automatyzacja** — rzeczy związane z przepływami automatycznymi i integracjami trafiają do strefy automatyzacji.
+- **Eksport** — gotowe pliki wyjściowe przeznaczone do przekazania, publikacji lub pobrania trafiają do strefy eksportów.
+- **Archiwum** — wersje stare, odrzucone albo zamknięte sprinty trafiają do archiwum.
+- **Administracja** — reguły organizacyjne, checklisty, roadmapy i log zmian trafiają do strefy administracyjnej.
+
+Repozytorium ma więc wspierać trzy rzeczy równocześnie:
+
+- poprawne położenie artefaktu,
+- poprawną logikę commita,
+- poprawną rekonstrukcję dziennego przebiegu pracy.
+
+## 3. Semantyka katalogów
+
+### `00_INBOX/`
+
+To jest strefa wejściowa dla materiałów jeszcze niesklasyfikowanych albo świeżo dostarczonych.
+
+Umieszczaj tutaj:
+
+- nowe materiały źródłowe,
+- surowe briefy,
+- nieobrobione notatki,
+- pliki dostarczone do dalszej oceny,
+- rzeczy, które jeszcze nie mają pewnego miejsca docelowego.
+
+Nie traktuj `00_INBOX` jako magazynu długoterminowego. To nie jest folder roboczy ani archiwum. Materiał powinien zostać stąd możliwie szybko przekierowany do właściwej lokalizacji.
+
+### `01_ACTIVE/`
+
+To jest strefa aktywnej pracy. Trafia tu wszystko, co jest w toku, rozwijane, testowane, poprawiane albo dopiero stabilizowane.
+
+#### `01_ACTIVE/Generator/`
+
+Dla aktywnie tworzonych systemów generujących prompty, dokumenty, instrukcje, struktury lub inne artefakty.
+
+Umieszczaj tutaj:
+
+- robocze prompt systemy generujące,
+- wersje rozwijane,
+- aktywne szkice generatorów,
+- iteracje jeszcze nieuznane za stabilne metodologicznie.
+
+#### `01_ACTIVE/Validator/`
+
+Dla aktywnie używanych lub rozwijanych systemów walidacji.
+
+Umieszczaj tutaj:
+
+- promptowe walidatory,
+- narzędzia diagnozy promptów,
+- robocze systemy oceny jakości,
+- aktywne iteracje walidacyjne.
+
+#### `01_ACTIVE/Repair/`
+
+Dla materiałów i systemów służących naprawie, korekcie lub rekoncyliacji błędnych wersji.
+
+Umieszczaj tutaj:
+
+- aktywne prompty naprawcze,
+- workflowy korekt,
+- poprawiane wersje jeszcze niezatwierdzone jako wynik końcowy.
+
+#### `01_ACTIVE/Benchmarks/`
+
+Dla roboczych benchmarków i testów porównawczych będących jeszcze częścią aktywnej pracy.
+
+Umieszczaj tutaj:
+
+- bieżące benchmarki modeli,
+- testy porównawcze,
+- aktywne zestawy kryteriów oceny,
+- eksperymenty porównawcze przed zamknięciem raportu.
+
+#### `01_ACTIVE/Source_Bound/`
+
+Dla prac, które są silnie związane ze źródłem i wymagają ścisłego trzymania się materiału wejściowego.
+
+Umieszczaj tutaj:
+
+- source-bound prompty,
+- workflowy 1:1 względem źródła,
+- robocze systemy wymagające ścisłej izolacji źródła.
+
+#### `01_ACTIVE/Workflow_Maps/`
+
+Dla aktywnie tworzonych map roboczych, takich jak mapy commitów, przepływów, zależności i routingu.
+
+Umieszczaj tutaj:
+
+- robocze mapy systemowe,
+- mapy commit workflow,
+- szkice struktur operacyjnych.
+
+Jeżeli mapa staje się stabilnym materiałem repozytoryjnym, może później trafić do `02_REPO_MATERIALS/Methodology/` lub pozostać tutaj tylko wtedy, gdy nadal jest aktywnie rozwijana.
+
+### `02_REPO_MATERIALS/`
+
+To jest strefa materiałów repozytoryjnych o znaczeniu względnie stabilnym. Nie służy do chaotycznej pracy dziennej, tylko do przechowywania materiałów, które opisują, wspierają lub porządkują projekt.
+
+#### `02_REPO_MATERIALS/README_Drafts/`
+
+Dla szkiców README i materiałów, które mają wejść do README, ale nie są jeszcze finalne.
+
+#### `02_REPO_MATERIALS/Methodology/`
+
+Dla stabilnych materiałów metodologicznych i reguł operacyjnych.
+
+Umieszczaj tutaj:
+
+- ustalone zasady pracy,
+- modele walidacyjne po ustabilizowaniu,
+- mapy workflow o charakterze metodologicznym,
+- standardy proceduralne.
+
+#### `02_REPO_MATERIALS/Case_Studies/`
+
+Dla opisanych przypadków, analiz przypadków i materiałów pokazujących działanie systemu na konkretnych przykładach.
+
+#### `02_REPO_MATERIALS/Portfolio_Summary/`
+
+Dla materiałów syntetyzujących dorobek projektu w sposób repozytoryjny lub prezentacyjny.
+
+#### `02_REPO_MATERIALS/Governance/`
+
+Dla zasad nadzoru, reguł kontroli, polityk jakości, reguł decyzyjnych i materiałów normatywnych dotyczących projektu.
+
+### `03_TEST_DATA/`
+
+To jest strefa danych testowych. Materiały tutaj służą do sprawdzania systemów, a nie do opisu finalnej metodologii ani do przechowywania wyników końcowych.
+
+#### `03_TEST_DATA/Weak_Prompts/`
+
+Dla słabych promptów, celowo wadliwych instrukcji lub materiałów testujących odporność systemu.
+
+#### `03_TEST_DATA/Documents/`
+
+Dla dokumentów używanych jako wejście testowe.
+
+#### `03_TEST_DATA/Briefs/`
+
+Dla briefów testowych, scenariuszy wejściowych i zadań próbnych.
+
+#### `03_TEST_DATA/Feedback/`
+
+Dla feedbacku używanego do testowania lub iteracyjnej oceny systemu.
+
+#### `03_TEST_DATA/Synthetic_Cases/`
+
+Dla sztucznie wygenerowanych przypadków testowych.
+
+### `04_RESULTS/`
+
+To jest strefa wyników. Trafia tu rezultat pracy, który ma wartość raportową, porównawczą, ewaluacyjną lub dokumentacyjną.
+
+#### `04_RESULTS/Validation_Reports/`
+
+Dla raportów walidacyjnych.
+
+#### `04_RESULTS/Before_After/`
+
+Dla porównań typu przed/po, pokazujących zmianę jakości, struktury lub poprawności.
+
+#### `04_RESULTS/Compression_Reports/`
+
+Dla raportów dotyczących kompresji promptów, redukcji redundancji i podobnych analiz.
+
+#### `04_RESULTS/Failure_Reports/`
+
+Dla raportów o błędach, porażkach, dryfie instrukcyjnym, złym routingu lub nieudanych eksperymentach.
+
+#### `04_RESULTS/Scorecards/`
+
+Dla ocen punktowych, tabel oceny, kart wyników i formalnych podsumowań jakości.
+
+### `05_AUTOMATION/`
+
+To jest strefa automatyzacji i integracji przepływów.
+
+#### `05_AUTOMATION/Make/`
+
+Dla materiałów związanych z Make.
+
+#### `05_AUTOMATION/n8n/`
+
+Dla materiałów związanych z n8n.
+
+#### `05_AUTOMATION/Webhooks/`
+
+Dla webhooków, definicji ich użycia i materiałów integracyjnych.
+
+#### `05_AUTOMATION/Flow_Experiments/`
+
+Dla eksperymentów z przepływami automatyzacyjnymi, które nie są jeszcze ustabilizowane.
+
+### `06_EXPORTS/`
+
+To jest strefa gotowych eksportów technicznych. Nie jest to miejsce do pracy roboczej. Trafiają tu wygenerowane pliki końcowe do przekazania, wysyłki, prezentacji, pobrania lub archiwizacji wyjścia.
+
+#### `06_EXPORTS/DOCX/`
+
+Dla gotowych plików DOCX.
+
+#### `06_EXPORTS/PDF/`
+
+Dla gotowych plików PDF.
+
+#### `06_EXPORTS/PNG/`
+
+Dla gotowych plików PNG.
+
+#### `06_EXPORTS/ZIP/`
+
+Dla gotowych paczek ZIP.
+
+### `07_ARCHIVE/`
+
+To jest strefa materiałów historycznych, zamkniętych albo wycofanych z aktywnego użycia.
+
+#### `07_ARCHIVE/Old_Versions/`
+
+Dla starszych wersji zastąpionych nowszymi.
+
+#### `07_ARCHIVE/Rejected/`
+
+Dla materiałów odrzuconych, niezaakceptowanych lub uznanych za błędne, ale zachowanych dla śladu decyzji.
+
+#### `07_ARCHIVE/Completed_Sprints/`
+
+Dla materiałów zamkniętych sprintów, gdy aktywna faza prac nad nimi dobiegła końca.
+
+### `08_ADMIN/`
+
+To jest strefa organizacyjna i sterująca. Nie służy do przechowywania aktywnych rezultatów merytorycznych ani danych testowych.
+
+#### `08_ADMIN/Roadmaps/`
+
+Dla planów etapów, roadmap i map czasowych projektu.
+
+#### `08_ADMIN/Checklists/`
+
+Dla checklist operacyjnych, kontroli jakości i procedur sprawdzających.
+
+#### `08_ADMIN/Naming_Rules/`
+
+Dla zasad nazewnictwa plików, folderów, wersji i artefaktów.
+
+#### `08_ADMIN/Change_Log/`
+
+Dla formalnego logu zmian na poziomie systemowym lub organizacyjnym projektu.
+
+## 4. Reguły routingu artefaktów
+
+Poniższe reguły mają charakter operacyjny. Model ma je stosować literalnie, a nie intuicyjnie.
+
+### Reguły bazowe
+
+- Jeżeli artefakt jest nowy i nie został jeszcze sklasyfikowany, umieść go w `00_INBOX/`.
+- Jeżeli artefakt jest aktywnie rozwijany, poprawiany albo iterowany, umieść go w odpowiednim podfolderze `01_ACTIVE/`.
+- Jeżeli artefakt jest stabilnym materiałem opisującym zasady, metodę albo strukturę repozytorium, umieść go w `02_REPO_MATERIALS/`.
+- Jeżeli artefakt służy tylko do testowania, umieść go w `03_TEST_DATA/`.
+- Jeżeli artefakt jest wynikiem ewaluacji, raportem, porównaniem albo kartą wyników, umieść go w `04_RESULTS/`.
+- Jeżeli artefakt dotyczy automatyzacji lub integracji workflow, umieść go w `05_AUTOMATION/`.
+- Jeżeli artefakt jest gotowym plikiem wyjściowym przeznaczonym do użycia poza roboczym kontekstem, umieść go w `06_EXPORTS/`.
+- Jeżeli artefakt nie jest już aktywny i ma być zachowany tylko historycznie, umieść go w `07_ARCHIVE/`.
+
+### Reguły dla szkiców i draftów
+
+- Jeżeli dokument jest szkicem README, umieść go w `02_REPO_MATERIALS/README_Drafts/`.
+- Jeżeli dokument jest roboczym szkicem metodologicznym, ale nadal trwa jego rozwój, umieść go w `01_ACTIVE/` albo w odpowiednim podfolderze specjalistycznym; nie przenoś go do `02_REPO_MATERIALS/Methodology/` zbyt wcześnie.
+- Jeżeli artefakt jest jeszcze niespójny, nieustalony albo nie wiadomo, czy jest metodologią, wynikiem czy testem, nie zgaduj — tymczasowo umieść go w `00_INBOX/` i odnotuj potrzebę klasyfikacji.
+
+### Reguły dla prompt systems
+
+- Jeżeli prompt system generuje treści lub struktury, kieruj go do `01_ACTIVE/Generator/`, dopóki nie stanie się stabilnym materiałem repozytoryjnym.
+- Jeżeli prompt system waliduje inne prompty lub instrukcje, kieruj go do `01_ACTIVE/Validator/`.
+- Jeżeli prompt system służy naprawie albo aplikacji walidacji, kieruj go do `01_ACTIVE/Repair/`.
+- Jeżeli prompt system jest ustabilizowaną metodą, a nie bieżącą iteracją, przenieś go do `02_REPO_MATERIALS/Methodology/`.
+
+### Reguły dla walidacji i napraw
+
+- Jeżeli artefakt jest samym narzędziem walidacji, należy do `01_ACTIVE/Validator/` lub po stabilizacji do `02_REPO_MATERIALS/Methodology/`.
+- Jeżeli artefakt jest wynikiem wykonanej walidacji, należy do `04_RESULTS/Validation_Reports/`.
+- Jeżeli artefakt pokazuje wersję przed i po naprawie, należy do `04_RESULTS/Before_After/`.
+- Jeżeli artefakt dokumentuje awarię, błędny routing, dryf albo nieudane działanie systemu, należy do `04_RESULTS/Failure_Reports/`.
+- Jeżeli poprawiona wersja nadal jest rozwijana, pozostaje w `01_ACTIVE/Repair/`.
+- Jeżeli poprawiona wersja jest tylko historycznie ważna, a została zastąpiona nowszą, przenieś starszą do `07_ARCHIVE/Old_Versions/`.
+
+### Reguły dla benchmarków i scorecards
+
+- Jeżeli benchmark jest w toku, należy do `01_ACTIVE/Benchmarks/`.
+- Jeżeli benchmark zakończył się raportem lub tabelą wyników, raport kieruj do `04_RESULTS/`, a punktacje do `04_RESULTS/Scorecards/`.
+- Jeżeli używasz osobnych danych wejściowych do benchmarku, trzymaj je w `03_TEST_DATA/`, a nie w `04_RESULTS/`.
+
+### Reguły dla source-bound materials
+
+- Jeżeli materiał musi zachować ścisły związek ze źródłem i nie może być swobodnie reinterpretowany, trzymaj go w `01_ACTIVE/Source_Bound/` dopóki trwa praca.
+- Jeżeli z takiej pracy powstaje stabilna instrukcja metodologiczna, wtedy wynik metodologiczny można przenieść do `02_REPO_MATERIALS/Methodology/`, ale nie sam surowy materiał źródłowo związany bez potrzeby.
+
+### Reguły dla workflow maps
+
+- Jeżeli mapa workflow jest aktywnie projektowana, kieruj ją do `01_ACTIVE/Workflow_Maps/`.
+- Jeżeli mapa staje się stabilnym dokumentem operacyjnym repozytorium, może zostać utrwalona w `02_REPO_MATERIALS/Methodology/`.
+- Nie traktuj map workflow jako README, jeżeli ich funkcja jest operacyjna, a nie opisowa.
+
+### Reguły dla case materials i test materials
+
+- Jeżeli przypadek jest materiałem testowym, umieść go w `03_TEST_DATA/`.
+- Jeżeli przypadek jest już opracowanym studium przypadku pokazującym metodykę albo wynik, umieść go w `02_REPO_MATERIALS/Case_Studies/`.
+- Nie mieszaj surowego przypadku testowego z opracowanym case study.
+
+### Reguły dla feedbacku
+
+- Jeżeli feedback jest materiałem wejściowym do testów lub iteracji, umieść go w `03_TEST_DATA/Feedback/`.
+- Jeżeli feedback został już przełożony na formalny raport o błędach lub działaniach naprawczych, wynik raportowy umieść w `04_RESULTS/Failure_Reports/` lub `04_RESULTS/Validation_Reports/`, zależnie od charakteru.
+
+### Reguły dla automatyzacji
+
+- Jeżeli artefakt opisuje lub implementuje przepływ automatyzacyjny, umieść go w `05_AUTOMATION/`.
+- Jeżeli przepływ jest tylko eksperymentem, kieruj go do `05_AUTOMATION/Flow_Experiments/`.
+- Jeżeli automatyzacja wspiera eksport, sam eksport nadal trafia do `06_EXPORTS/`, a nie do `05_AUTOMATION/`.
+
+### Reguły dla eksportów
+
+- Jeżeli plik jest gotowym DOCX, PDF, PNG albo ZIP do wydania, trafia do odpowiedniego podfolderu `06_EXPORTS/`.
+- Eksport nie zastępuje materiału źródłowego ani wyniku metodologicznego. Plik `.pdf` będący eksportem raportu trafia do `06_EXPORTS/PDF/`, ale sam raport jako materiał roboczo-wynikowy może nadal istnieć w `04_RESULTS/`.
+
+### Reguły dla odrzuconych i ukończonych
+
+- Jeżeli materiał został odrzucony decyzją projektową, trafia do `07_ARCHIVE/Rejected/`.
+- Jeżeli materiał był kiedyś aktywny, ale został zastąpiony, trafia do `07_ARCHIVE/Old_Versions/`.
+- Jeżeli pakiet prac należy do zamkniętego sprintu, trafia do `07_ARCHIVE/Completed_Sprints/`.
+
+## 5. Reguły integracji z `daily_log`
+
+`daily_log` ma rejestrować przebieg pracy dziennej w sposób operacyjny i śledzalny. Nie ma być pamiętnikiem ani luźnym opisem dnia. Ma odzwierciedlać działania, decyzje, ruch artefaktów i istotność commitową.
+
+### Co powinno być odnotowane w `daily_log`
+
+Odnotowuj:
+
+- utworzenie nowego artefaktu,
+- klasyfikację artefaktu i jego umieszczenie w folderze,
+- przeniesienie artefaktu między folderami,
+- rozpoczęcie pracy aktywnej nad konkretnym materiałem,
+- zakończenie iteracji,
+- powstanie raportu, wyniku, eksportu albo archiwizacji,
+- decyzję o odrzuceniu materiału,
+- decyzję o stabilizacji materiału metodologicznego,
+- zmianę mającą znaczenie dla commitów lub struktury projektu.
+
+### Jak `daily_log` ma odnosić się do artefaktów
+
+Każdy wpis powinien możliwie jasno wskazywać:
+
+- co zostało utworzone lub zmienione,
+- gdzie artefakt został umieszczony,
+- dlaczego tam trafił,
+- czy zmiana jest commit-relevant,
+- czy materiał przeszedł etap: `inbox → active → results / repo materials / exports / archive`.
+
+### Co powinno być śledzone szczególnie
+
+`daily_log` powinien śledzić zwłaszcza:
+
+- ruch z `00_INBOX/` do folderu właściwego,
+- przejście z `01_ACTIVE/` do `04_RESULTS/`,
+- przejście z `01_ACTIVE/` do `02_REPO_MATERIALS/`,
+- utworzenie plików w `06_EXPORTS/`,
+- archiwizację starych lub odrzuconych wersji,
+- zmianę statusu materiału z roboczego na stabilny.
+
+### Czego nie robić w `daily_log`
+
+Nie zapisuj tylko ogólników typu:
+
+- „pracowano nad promptem”,
+- „zrobiono porządki”,
+- „dodano pliki”.
+
+Takie wpisy niszczą śledzalność. Wpis musi wskazywać artefakt, lokalizację i status operacyjny.
+
+## 6. Reguły istotności commitowej
+
+Nie każdy plik zasługuje na commit w takim samym stopniu. Commitowość zależy od statusu operacyjnego materiału.
+
+### Surowe wejście (`raw intake`)
+
+Materiały surowe w `00_INBOX/` są commit-relevant tylko wtedy, gdy ich obecność jest celowa, udokumentowana i potrzebna do odtworzenia procesu. Nie należy commitować chaotycznego napływu bez sensu porządkującego.
+
+### Aktywne szkicowanie (`active drafting`)
+
+Materiały z `01_ACTIVE/` są commit-relevant wtedy, gdy:
+
+- reprezentują realny postęp,
+- zmieniają logikę systemu,
+- dodają nową iterację o znaczeniu roboczym,
+- modyfikują workflow, metodę albo strukturę pracy.
+
+Nie każdy mikro-szkic wymaga osobnego commita. Commit powinien obejmować sensowną jednostkę postępu.
+
+### Materiał wyłącznie testowy (`test-only material`)
+
+Materiały z `03_TEST_DATA/` są commit-relevant wtedy, gdy:
+
+- stanowią część reprodukowalnego testu,
+- są używane przez benchmark lub walidację,
+- dokumentują zestaw przypadków potrzebnych do dalszych prac.
+
+Nie commituj przypadkowych testów pozbawionych wartości odtworzeniowej.
+
+### Stabilny materiał metodologiczny (`stable methodological material`)
+
+Materiały z `02_REPO_MATERIALS/Methodology/`, `Governance/`, `Naming_Rules/`, `Checklists/` i podobnych stref są silnie commit-relevant, ponieważ wpływają na reguły pracy całego projektu.
+
+### Znaczące wyniki (`meaningful results`)
+
+Materiały z `04_RESULTS/` są z natury commit-relevant, jeśli stanowią rzeczywisty rezultat: raport, porównanie, scorecard, raport porażki, raport kompresji.
+
+### Artefakty eksportowe (`export artifacts`)
+
+Materiały z `06_EXPORTS/` są commit-relevant tylko wtedy, gdy repozytorium ma przechowywać eksporty jako część śladu projektu. Jeżeli eksport jest wtórnym produktem pliku źródłowego i nie ma wartości repozytoryjnej, jego commit może być zbędny. W takim przypadku należy kierować się zasadami projektu, a decyzję odnotować w `daily_log`.
+
+### Ruch wyłącznie archiwalny (`archive-only movement`)
+
+Samo przeniesienie do `07_ARCHIVE/` może być commit-relevant, jeżeli:
+
+- porządkuje wersjonowanie,
+- zamyka sprint,
+- dokumentuje odrzucenie,
+- czyści aktywną przestrzeń w sposób ważny dla historii projektu.
+
+Przeniesienia archiwalne bez znaczenia organizacyjnego nie powinny generować sztucznego szumu commitowego.
+
+## 7. Ograniczenia rozmieszczenia
+
+Poniższe ograniczenia są obowiązkowe.
+
+### Czego nie wolno mieszać
+
+Nie wolno mieszać:
+
+- materiałów surowych z wynikami,
+- danych testowych z materiałami metodologicznymi,
+- aktywnych szkiców z eksportami,
+- odrzuconych wersji z aktywną pracą,
+- formalnych raportów z luźnym feedbackiem,
+- case studies z nieopracowanymi przypadkami testowymi,
+- materiałów automatyzacyjnych z treściami merytorycznymi, które nie dotyczą automatyzacji.
+
+### Czego model nie może zgadywać
+
+Model nie może zgadywać:
+
+- że coś jest wynikiem tylko dlatego, że wygląda „na gotowe”,
+- że coś jest metodologią tylko dlatego, że jest dobrze napisane,
+- że coś należy do eksportów tylko dlatego, że ma rozszerzenie `.pdf` albo `.docx`,
+- że coś można zarchiwizować tylko dlatego, że długo nie było używane,
+- że wszystko z `01_ACTIVE/` jest automatycznie commit-worthy.
+
+Jeżeli status jest niepewny, materiał należy tymczasowo zatrzymać w `00_INBOX/` albo utrzymać w `01_ACTIVE/` z wyraźnym odnotowaniem niepewności w `daily_log`.
+
+### Dlaczego to jest krytyczne
+
+Błędne użycie folderów uszkadza śledzalność. Jeżeli artefakty są źle rozmieszczone:
+
+- commit przestaje odzwierciedlać realny postęp,
+- `daily_log` traci wartość dowodową,
+- trudniej odtworzyć tok prac,
+- powstaje dryf routingu,
+- model zaczyna utrwalać złe wzorce rozmieszczenia.
+
+## 8. Reguły archiwizacji i cyklu życia
+
+Każdy artefakt ma cykl życia. Model powinien rozumieć, że położenie pliku zależy od jego aktualnego statusu, a nie od historii samej nazwy.
+
+### Typowy cykl życia
+
+Najczęstszy przebieg wygląda tak:
+
+- `00_INBOX/` — materiał przyjęty, jeszcze niesklasyfikowany,
+- `01_ACTIVE/` — materiał w aktywnej obróbce,
+
+następnie jedno z poniższych:
+
+- `02_REPO_MATERIALS/` — gdy staje się stabilnym materiałem repozytoryjnym,
+- `04_RESULTS/` — gdy staje się wynikiem,
+- `06_EXPORTS/` — gdy powstaje gotowy plik wyjściowy,
+- `07_ARCHIVE/` — gdy zostaje wycofany, zastąpiony, odrzucony albo zamknięty historycznie.
+
+### Kiedy przenosić do archiwum
+
+Przenieś do `07_ARCHIVE/`, gdy:
+
+- istnieje nowsza wersja robocza lub stabilna,
+- materiał został odrzucony,
+- sprint został zamknięty,
+- wersja nie jest już aktywnie używana, ale ma pozostać jako ślad historyczny.
+
+### Kiedy nie przenosić do archiwum
+
+Nie przenoś do archiwum, gdy:
+
+- materiał nadal jest aktywnie referencjonowany,
+- nie powstała jeszcze wersja zastępująca,
+- materiał jest aktualną metodologią,
+- materiał jest obowiązującą mapą workflow,
+- brak decyzji o zamknięciu lub odrzuceniu.
+
+### Relacja archiwum do wyników i repo materials
+
+Archiwum nie zastępuje `04_RESULTS/` ani `02_REPO_MATERIALS/`.
+
+- Wynik ważny i aktualny pozostaje w `04_RESULTS/`.
+- Stabilna metodologia pozostaje w `02_REPO_MATERIALS/`.
+
+Do archiwum trafia wersja historyczna, odrzucona lub zamknięta, a nie aktualna wersja obowiązująca.
+
+## 9. Typowe tryby błędu
+
+### Błędy routingu
+
+- Umieszczanie surowych wejść bezpośrednio w `01_ACTIVE/`, mimo że nie zostały jeszcze sklasyfikowane.
+- Wrzucanie raportów do `02_REPO_MATERIALS/`, mimo że są wynikiem, a nie metodologią.
+- Przechowywanie danych testowych w `04_RESULTS/`.
+- Traktowanie eksportu jako jedynej wersji materiału i pomijanie wersji źródłowej.
+- Trzymanie materiałów odrzuconych razem z aktywnymi.
+- Używanie `00_INBOX/` jako trwałego magazynu.
+
+### Błędy związane z `daily_log`
+
+- Brak odnotowania przeniesienia artefaktu między folderami.
+- Notowanie działań bez wskazania pliku lub lokalizacji.
+- Opisywanie pracy wyłącznie ogólnikami.
+- Nieodnotowanie decyzji, że coś stało się wynikiem, eksportem albo archiwum.
+- Brak śladu, dlaczego plik zmienił status.
+
+### Błędy logiki commitów
+
+- Commitowanie drobnych, chaotycznych szkiców bez znaczenia procesowego.
+- Pomijanie commitów dla materiałów metodologicznych, które realnie zmieniają sposób pracy.
+- Łączenie w jednym commicie zmian należących do różnych statusów operacyjnych bez wyraźnej logiki.
+- Commitowanie eksportów bez commitowania materiału źródłowego, z którego powstały.
+- Traktowanie samego przeniesienia pliku jako wartościowego commita, mimo braku sensu organizacyjnego.
+
+### Błędy klasyfikacji
+
+- Uznanie draftu za metodologię tylko dlatego, że wygląda formalnie.
+- Uznanie testu za wynik tylko dlatego, że zawiera tabelę.
+- Uznanie feedbacku za raport końcowy, mimo że nie został jeszcze opracowany.
+- Uznanie starej wersji za aktywną, mimo że istnieje nowsza i obowiązująca.
+
+## 10. Operacyjna nota końcowa
+
+Model ma traktować tę mapę jako regułę routingu i śledzalności, a nie jako opis orientacyjny. W razie wątpliwości należy preferować:
+
+- jawne utrzymanie statusu roboczego zamiast fałszywej finalizacji,
+- jawne odnotowanie niepewności w `daily_log` zamiast zgadywania,
+- rozdzielenie materiałów według funkcji operacyjnej zamiast według powierzchownego podobieństwa.
