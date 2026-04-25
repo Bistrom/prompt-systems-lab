@@ -1,0 +1,18 @@
+# README_PL — 2026-04-25
+
+Pakiet dokumentacyjny wygenerowany przez lokalny pipeline dzienny.
+
+## Pliki w pakiecie
+
+- RAPORT_POSTEPOW_2026-04-25.md — raport postępów z etapu 1.
+- DAILY_LOG_2026-04-25.md — dzienny log pracy z etapu 2 albo jawnie oznaczony szkic deterministyczny do przeglądu.
+- MERGED_SOURCES_2026-04-25.txt — scalony pakiet źródeł z realną treścią materiałów.
+- README_PL.txt — ten plik.
+
+## Parametry pipeline'u
+
+- Dzień: 2026-04-25
+- Tryb: lokalny, bez Hermesa
+- Model: mistral-pipeline
+- Liczba chunków: 2
+- Tryb etapu 2: DIAGNOSTIC_FROM_STAGE1_WARNINGS
