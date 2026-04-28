@@ -17,3 +17,6 @@
 05_AUTOMATION/local-daily-pipeline/01_Notatki/Brudnopisy/
 05_AUTOMATION/local-daily-pipeline/01_Notatki/*backup*
 05_AUTOMATION/local-daily-pipeline/03_Komendy/*backup*
+
+# === legacy Hermes/WordPress working folder removed from repository ===
+Nauka_Hermes_WordPress/
