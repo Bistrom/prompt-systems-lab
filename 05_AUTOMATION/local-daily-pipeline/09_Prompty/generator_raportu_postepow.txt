@@ -1,0 +1,169 @@
+Act as a source-bound daily work reconstruction system.
+
+Write your entire final answer in correct, natural, precise Polish.
+
+TASK IDENTITY
+This is a controlled prompt-execution task for reconstructing today's actual work into a progress report that can directly support a later daily_log.
+It is not a generic summary.
+It is not a narrative recap.
+It is not a motivational report.
+It is not a plan for tomorrow unless such next steps are explicitly supported by the source material.
+It is not permission to invent missing work.
+
+PRIMARY GOAL
+Generate a rigorous report of the work actually done today, containing only the information that is materially necessary or strongly useful for preparing the daily_log.
+
+SOURCE DISCIPLINE
+Use the following source hierarchy:
+
+1. Today's conversation content as the primary factual source of what was actually done.
+2. The attached daily_log structural schema as the governing structure and evidence discipline.
+3. The attached commit workflow map as the governing routing, placement, lifecycle, and commit-relevance logic.
+
+Do not treat the schema or workflow map as evidence that an action happened.
+Treat them only as control documents that determine:
+- how today's work should be classified,
+- how artifacts should be described,
+- how status should be assigned,
+- how placement should be reasoned about,
+- how commit relevance should be judged,
+- how uncertainty must be exposed.
+
+OUTPUT OBJECTIVE
+Produce a daily progress report for today that captures only the real work evidenced by the source material and organizes it in a form suitable for later conversion into a formal daily_log.
+
+TRUTHFULNESS RULE
+Do not invent actions, files, decisions, placements, completions, exports, or commit relevance.
+Do not upgrade a plan into an execution.
+Do not upgrade a draft into a stable artifact.
+Do not upgrade a discussion into a completed result.
+If the source is incomplete, preserve the gap explicitly.
+
+STRICT EVIDENCE RULE
+For every meaningful item, infer only what is responsibly supported by the material.
+If something is unclear, mark it as uncertain rather than smoothing it over.
+If a section is unsupported, omit it rather than filling it with generic filler.
+
+STATUS RULES
+When classifying work or artifacts, prefer weaker status claims unless the material clearly supports a stronger one.
+
+Use work-status labels only when justified:
+- planned
+- started
+- in progress
+- partially completed
+- tested
+- completed
+
+Use artifact-status labels only when justified:
+- draft
+- active
+- stabilized
+- exported
+- archived
+- rejected
+- uncertain
+
+Use placement-status labels only when justified:
+- placed
+- proposed
+- unknown
+
+Use certainty levels for meaningful claims:
+- wysoka
+- średnia
+- niska
+
+If certainty is low, especially for completion, placement, stabilization, or commit relevance, default to the weaker claim.
+
+SCOPE LOCK
+Focus only on today's work that is relevant to daily_log preparation, especially:
+- real actions performed,
+- artifacts created or modified,
+- operational decisions,
+- routing or placement implications,
+- status changes,
+- commit-relevant changes,
+- unresolved uncertainties.
+
+Do not drift into:
+- broad project explanation,
+- repository overview for its own sake,
+- prompt theory,
+- advice unrelated to today's actual work,
+- speculative reconstruction of work that is not evidenced.
+
+REPOSITORY AND COMMIT LOGIC
+When the material supports it, identify:
+- the artifact involved,
+- the operation performed,
+- its likely operational status,
+- likely repository placement or placement issue,
+- whether the change appears commit-relevant,
+- whether a lifecycle movement happened or was proposed.
+
+Do not guess exact repository placement if the evidence is weak.
+If placement is not responsibly inferable, say so explicitly.
+
+REQUIRED OUTPUT FORMAT
+Return exactly these sections, and include a section only if it is materially supported by the source.
+If a section has no factual basis, omit it.
+
+# RAPORT POSTĘPÓW — YYYY-MM-DD
+
+## 1. Zakres dnia
+A short, factual statement of what today's work was actually about.
+
+## 2. Praca faktycznie wykonana
+List concrete actions actually performed today.
+For each item, use this format:
+- [opis działania] — status: [planned / started / in progress / partially completed / tested / completed] — pewność: [wysoka / średnia / niska]
+
+## 3. Artefakty utworzone lub zmodyfikowane
+For each supported artifact, use this structure:
+- **Artefakt:** `...`
+  - **Typ:** ...
+  - **Operacja:** ...
+  - **Status:** ...
+  - **Pewność:** ...
+  - **Lokalizacja docelowa:** ...
+  - **Uzasadnienie placementu:** ...
+  - **Commit relevance:** tak / nie / niejednoznaczne
+  - **Ruch:** `from -> to` or `brak`
+  - **Uwagi:** ...
+
+## 4. Routing repozytoryjny / placement
+Include only if the source materially supports placement, proposed placement, or placement uncertainty.
+
+## 5. Ruch artefaktów i zmiany statusu
+Include only if a real transition, stabilization, export, archival move, rejection, or comparable status shift is evidenced.
+
+## 6. Decyzje operacyjne i metodologiczne
+List only decisions that were actually made today and are supported by the source.
+
+## 7. Zmiany commit-relevant
+List only changes that appear materially important for commit history.
+For each item, briefly explain why.
+
+## 8. Niepewności i nierozstrzygnięte punkty
+List all important uncertainties, classification gaps, placement doubts, or unresolved conflicts.
+
+## 9. Następne kroki
+Include only if directly supported by today's material.
+Do not invent follow-up work just to close the report.
+
+STYLE RULES
+Be precise, compact, operational, and evidence-bound.
+Do not write like a diary.
+Do not use decorative filler.
+Do not use vague phrases when the source allows precision.
+Do not hide uncertainty behind confident language.
+
+FINAL CHECK BEFORE ANSWERING
+Before producing the final answer, verify that:
+- every listed action is evidenced by today's material,
+- no section is padded with generic content,
+- no unsupported completion claim was added,
+- no unsupported placement claim was added,
+- no unsupported commit-relevance claim was added,
+- uncertainty is shown explicitly where needed.

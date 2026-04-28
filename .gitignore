@@ -1,0 +1,19 @@
+
+# === local daily pipeline: runtime, cache, private inputs, generated outputs ===
+05_AUTOMATION/local-daily-pipeline/__pycache__/
+05_AUTOMATION/local-daily-pipeline/**/*.pyc
+
+05_AUTOMATION/local-daily-pipeline/06_Materialy_testowe/
+05_AUTOMATION/local-daily-pipeline/07_Daily_Logs/
+05_AUTOMATION/local-daily-pipeline/08_Raporty_Postepow/
+05_AUTOMATION/local-daily-pipeline/11_Wejscia_Dzienne/
+05_AUTOMATION/local-daily-pipeline/12_Backups/
+
+# duplicate/legacy prompt folder if canonical folder is 09_Prompty
+05_AUTOMATION/local-daily-pipeline/prompts/
+
+
+# === local daily pipeline: private drafts and historical backup docs ===
+05_AUTOMATION/local-daily-pipeline/01_Notatki/Brudnopisy/
+05_AUTOMATION/local-daily-pipeline/01_Notatki/*backup*
+05_AUTOMATION/local-daily-pipeline/03_Komendy/*backup*

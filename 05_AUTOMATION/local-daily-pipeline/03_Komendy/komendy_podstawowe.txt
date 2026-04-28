@@ -1,0 +1,183 @@
+# KOMENDY PODSTAWOWE — lokalny pipeline daily log
+
+Ten plik jest krótką ściągą do ręcznej pracy z pipeline’em dziennym w WSL / Ubuntu.
+
+Hermes został usunięty z procesu. Obecny pipeline działa lokalnie przez Ollamę.
+
+Najważniejsze rozróżnienie:
+- PowerShell używa ścieżek typu: `C:\Users\...`
+- WSL / Ubuntu używa ścieżek typu: `/mnt/c/Users/...`
+
+Nie wklejaj ścieżek `/mnt/c/...` do PowerShella.
+
+## 1. Wejście do katalogu projektu w WSL / Ubuntu
+
+```bash
+cd "/mnt/c/Users/aleks/Documents/prompt-systems-lab/05_AUTOMATION/local-daily-pipeline"
+pwd
+ls -la
+```
+
+## 2. Wejście do katalogu projektu w PowerShell
+
+```powershell
+cd "C:\Users\aleks\Documents\prompt-systems-lab\05_AUTOMATION\local-daily-pipeline"
+dir
+```
+
+## 3. Utworzenie folderu dnia
+
+Zmień datę w zmiennej `DAY`.
+
+```bash
+BASE="/mnt/c/Users/aleks/Documents/prompt-systems-lab/05_AUTOMATION/local-daily-pipeline"
+DAY="2026-04-25"
+mkdir -p "$BASE/11_Wejscia_Dzienne/$DAY"
+```
+
+## 4. Wymagane wejście dnia
+
+W folderze:
+
+```text
+11_Wejscia_Dzienne/YYYY-MM-DD/
+```
+
+musi być plik:
+
+```text
+chat_export_YYYY-MM-DD.md
+```
+
+Opcjonalnie może być:
+
+```text
+rough_work_YYYY-MM-DD.md
+```
+
+Brudnopis musi mieć małe litery w nazwie: `rough_work`, nie `ROUGH_WORK`.
+
+## 5. Szybka walidacja wejść
+
+```bash
+BASE="/mnt/c/Users/aleks/Documents/prompt-systems-lab/05_AUTOMATION/local-daily-pipeline"
+DAY="2026-04-25"
+
+DAYDIR="$BASE/11_Wejscia_Dzienne/$DAY"
+CHAT="$DAYDIR/chat_export_$DAY.md"
+ROUGH="$DAYDIR/rough_work_$DAY.md"
+WF="$BASE/10_Zrodla_Sterujace/COMMIT_WORKFLOW_MAP.md"
+SCHEMA="$BASE/10_Zrodla_Sterujace/schemat_daily_log.md"
+P1="$BASE/09_Prompty/generator_raportu_postepow.txt"
+P2="$BASE/09_Prompty/generator_dokumentacji_dnia_v2.txt"
+
+[ -d "$DAYDIR" ] && echo "DAYDIR=TAK" || echo "DAYDIR=NIE"
+[ -f "$CHAT" ] && echo "CHAT=TAK" || echo "CHAT=NIE"
+[ -f "$ROUGH" ] && echo "ROUGH_WORK=TAK" || echo "ROUGH_WORK=NIE / OPCJONALNIE"
+[ -f "$WF" ] && echo "WORKFLOW=TAK" || echo "WORKFLOW=NIE"
+[ -f "$SCHEMA" ] && echo "SCHEMA=TAK" || echo "SCHEMA=NIE"
+[ -f "$P1" ] && echo "PROMPT_ETAP_1=TAK" || echo "PROMPT_ETAP_1=NIE"
+[ -f "$P2" ] && echo "PROMPT_ETAP_2=TAK" || echo "PROMPT_ETAP_2=NIE"
+```
+
+## 6. Uruchomienie pipeline’u
+
+```bash
+bash "/mnt/c/Users/aleks/Documents/prompt-systems-lab/05_AUTOMATION/local-daily-pipeline/05_AUTOMATION/local-daily-pipeline/run_daily_pipeline.sh" 2026-04-25 20000 2000
+```
+
+Znaczenie parametrów:
+- `2026-04-25` — dzień do przetworzenia,
+- `20000` — chunk size, czyli rozmiar jednego kawałka tekstu,
+- `2000` — overlap, czyli zakładka między chunkami.
+
+Nie ustawiaj overlap większego lub równego chunk size.
+
+## 7. Gdzie trafiają wyniki
+
+```text
+RAPORT_POSTEPOW_YYYY-MM-DD.md
+→ 08_Raporty_Postepow/
+
+DAILY_LOG_YYYY-MM-DD.md
+→ 07_Daily_Logs/01_Poprawne/
+albo
+→ 07_Daily_Logs/02_Do_Naprawy/
+
+MERGED_SOURCES_YYYY-MM-DD.txt
+→ 12_Backups/01 MERGED_SOURCES/
+
+README_PL_YYYY-MM-DD.txt
+→ 12_Backups/02 README_PL/
+```
+
+## 8. Sprawdzenie wyników
+
+```bash
+BASE="/mnt/c/Users/aleks/Documents/prompt-systems-lab/05_AUTOMATION/local-daily-pipeline"
+DAY="2026-04-25"
+
+ls -lah "$BASE/08_Raporty_Postepow" | grep "$DAY" || true
+ls -lah "$BASE/07_Daily_Logs/01_Poprawne" | grep "$DAY" || true
+ls -lah "$BASE/07_Daily_Logs/02_Do_Naprawy" | grep "$DAY" || true
+ls -lah "$BASE/12_Backups/01 MERGED_SOURCES" | grep "$DAY" || true
+ls -lah "$BASE/12_Backups/02 README_PL" | grep "$DAY" || true
+```
+
+## 9. Walidacja MERGED_SOURCES
+
+```bash
+BASE="/mnt/c/Users/aleks/Documents/prompt-systems-lab/05_AUTOMATION/local-daily-pipeline"
+DAY="2026-04-25"
+
+python3 "$BASE/validate_merged_sources.py" \
+  --merged "$BASE/12_Backups/01 MERGED_SOURCES/MERGED_SOURCES_$DAY.txt"
+```
+
+## 10. Sprawdzenie, czy MERGED_SOURCES nie zawiera pełnych promptów
+
+```bash
+BASE="/mnt/c/Users/aleks/Documents/prompt-systems-lab/05_AUTOMATION/local-daily-pipeline"
+DAY="2026-04-25"
+
+grep -n "SOURCE CATEGORY: PROMPT" "$BASE/12_Backups/01 MERGED_SOURCES/MERGED_SOURCES_$DAY.txt" \
+  || echo "OK: brak pełnej treści promptów w MERGED_SOURCES"
+```
+
+## 11. Najczęstsze błędy
+
+- Brak `chat_export_YYYY-MM-DD.md` blokuje pipeline.
+- Brak `rough_work_YYYY-MM-DD.md` nie blokuje pipeline.
+- Zła nazwa brudnopisu, np. `ROUGH_WORK_...`, nie zostanie wykryta.
+- Ścieżki ze spacjami zawsze dawaj w cudzysłowie.
+- Nie uruchamiaj komend WSL w PowerShellu bez przeróbki ścieżek.
+- Jeżeli `DAILY_LOG` trafia do `02_Do_Naprawy`, to nie jest finalnie zatwierdzony.
+
+
+## 12. Cache etapu 1
+
+W logu pipeline'u sprawdzaj `CACHE HIT` i `CACHE MISS`.
+
+```bash
+BASE="/mnt/c/Users/aleks/Documents/prompt-systems-lab/05_AUTOMATION/local-daily-pipeline"
+find "$BASE/12_Backups/03_STAGE1_CACHE" -type f | head
+```
+
+
+## 13. Wersja v7.1
+
+v7.1 to bezpieczna wersja po rollbacku z v8.
+
+Sprawdzenie, czy uruchamia się właściwa wersja:
+
+```bash
+grep -n "Wersja:" "/tmp/run_daily_pipeline_stage1_2026-04-25.log" || true
+grep -n "Wersja:" "/tmp/run_daily_pipeline_stage2_2026-04-25.log" || true
+```
+
+Oczekiwane fragmenty:
+
+```text
+v7.1 short-extraction-cache-safe
+v7.1 optimized-stage1-full-stage2-safe
+```
