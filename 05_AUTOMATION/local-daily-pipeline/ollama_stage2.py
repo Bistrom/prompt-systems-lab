@@ -177,7 +177,7 @@ BAD_QUALITY_PATTERNS = [
     r"\bPROJEST\s+INŻYNIERSKI\b",
     r"\bPROJEKT\s+INŻYNIERYSKI\b",
     r"\bWordlPress\b",
-    r"\bWordpress\b",
+    # Usunięto r"\\bWordpress\\b": przy re.IGNORECASE fałszywie odrzucało poprawne "WordPress".
     r"znajduje się w folderze\s+01_Scripts",
     r"znajduje się w folderze\s+02_Pipeline_Stages",
 ]
@@ -330,9 +330,44 @@ def extract_path_like_fragments(text: str) -> list[str]:
 
 def unsupported_path_like_fragments(daily_log: str, source_report: str) -> list[str]:
     unsupported = []
+
+    generic_slash_phrases = {
+        "pliki/skrypty/foldery",
+        "plik/skrypt/folder",
+        "raport/postępów",
+    }
+
     for fragment in extract_path_like_fragments(daily_log):
+        normalized = fragment.strip().lower()
+
+        # Nie traktuj zwykłych kategorii opisowych z ukośnikami jako ścieżek projektu.
+        if normalized in generic_slash_phrases:
+            continue
+
+        # Heurystyka: ścieżka projektowa zwykle ma rozszerzenie pliku,
+        # zaczyna się od /, zawiera ./ albo zawiera znany katalog repo.
+        looks_project_specific = (
+            fragment.startswith("/")
+            or fragment.startswith("./")
+            or re.search(r"\.(md|txt|py|sh|json|yml|yaml|csv|docx|pdf)\b", fragment, flags=re.IGNORECASE)
+            or any(marker in fragment for marker in [
+                "05_AUTOMATION/",
+                "07_Daily_Logs/",
+                "08_Raporty_Postepow/",
+                "09_Prompty/",
+                "10_Zrodla_Sterujace/",
+                "11_Wejscia_Dzienne/",
+                "12_Backups/",
+                "Nauka_Hermes_WordPress/",
+            ])
+        )
+
+        if not looks_project_specific:
+            continue
+
         if fragment not in source_report:
             unsupported.append(fragment)
+
     return unsupported
 
 
@@ -418,6 +453,7 @@ def unsupported_artifact_failures(daily_log: str, source_report: str) -> list[st
 
     daily_artifacts = artifact_basenames(daily_log)
     report_artifacts = artifact_basenames(source_report)
+    report_artifacts_lower = {item.lower() for item in report_artifacts}
 
     allowed_generated_prefixes = (
         "DAILY_LOG_",
@@ -425,6 +461,7 @@ def unsupported_artifact_failures(daily_log: str, source_report: str) -> list[st
         "README_PL",
         "RAW_STAGE2_RESPONSE_",
         "RAW_STAGE2_REPAIR_RESPONSE_",
+        "RAPORT_POSTEPOW_",
     )
 
     unsupported: list[str] = []
@@ -432,7 +469,7 @@ def unsupported_artifact_failures(daily_log: str, source_report: str) -> list[st
     for artifact in sorted(daily_artifacts):
         if artifact.startswith(allowed_generated_prefixes):
             continue
-        if artifact not in report_artifacts:
+        if artifact.lower() not in report_artifacts_lower:
             unsupported.append(artifact)
 
     if unsupported:
@@ -532,12 +569,39 @@ def required_daily_log_section_failures(daily_log: str) -> list[str]:
 
 
 def planned_status_anywhere_failures(daily_log: str) -> list[str]:
-    if re.search(r"status:\s*planned", daily_log, flags=re.IGNORECASE):
-        return [
-            "DAILY_LOG zawiera status: planned. Następne kroki mają być zwykłymi punktami bez metadanych statusu."
-        ]
+    """
+    Odrzuca planned tylko wtedy, gdy wygląda jak realny status wpisu,
+    a nie gdy jest częścią diagnostycznego opisu błędu walidatora.
+    """
+    failures: list[str] = []
 
-    return []
+    performed = extract_markdown_section(daily_log, "## 2. Praca faktycznie wykonana")
+    bad_performed = [
+        line.strip()
+        for line in performed.splitlines()
+        if line.strip().startswith(("-", "*"))
+        and re.search(r"status:\s*planned\b", line, flags=re.IGNORECASE)
+    ]
+    if bad_performed:
+        failures.append(
+            "Sekcja '## 2. Praca faktycznie wykonana' zawiera planned jako status wykonanej pracy: "
+            + " | ".join(bad_performed[:5])
+        )
+
+    next_steps = extract_markdown_section(daily_log, "## 6. Następne kroki")
+    bad_next = [
+        line.strip()
+        for line in next_steps.splitlines()
+        if line.strip().startswith(("-", "*"))
+        and re.search(r"(?:—|-|\()\s*status:\s*planned\b", line, flags=re.IGNORECASE)
+    ]
+    if bad_next:
+        failures.append(
+            "Sekcja '## 6. Następne kroki' zawiera planned jako metadany statusu; następne kroki mają być zwykłymi punktami: "
+            + " | ".join(bad_next[:5])
+        )
+
+    return failures
 
 
 def workflow_metadata_noise_failures(daily_log: str) -> list[str]:
@@ -568,6 +632,153 @@ def workflow_metadata_noise_failures(daily_log: str) -> list[str]:
 
     return []
 
+
+def wrong_day_completed_failures(daily_log: str) -> list[str]:
+    failures: list[str] = []
+
+    header_match = re.search(r"^#\s+DAILY LOG\s+—\s+(\d{4}-\d{2}-\d{2})\s*$", daily_log, flags=re.MULTILINE)
+    if not header_match:
+        return failures
+
+    current_day = header_match.group(1)
+    performed = extract_markdown_section(daily_log, "## 2. Praca faktycznie wykonana")
+
+    bad_lines: list[str] = []
+    for line in performed.splitlines():
+        if not line.strip().startswith(("-", "*")):
+            continue
+        dates = re.findall(r"\b\d{4}-\d{2}-\d{2}\b", line)
+        if not dates:
+            continue
+        if any(date != current_day for date in dates) and re.search(r"status:\s*(completed|tested)\b", line, flags=re.IGNORECASE):
+            bad_lines.append(line.strip())
+
+    if bad_lines:
+        failures.append(
+            "Sekcja pracy wykonanej zawiera completed/tested dla innej daty niż dzień DAILY_LOG: "
+            + " | ".join(bad_lines[:5])
+        )
+
+    return failures
+
+
+def negative_completed_status_failures(daily_log: str) -> list[str]:
+    performed = extract_markdown_section(daily_log, "## 2. Praca faktycznie wykonana")
+    bad_lines: list[str] = []
+
+    for line in performed.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith(("-", "*")):
+            continue
+
+        negative_claim = re.search(
+            r"^\s*[-*]\s*(Nie\s+sprawdzono|Nie\s+wykonano|Nie\s+ustalono|Brak\s+potwierdzenia|Brak\s+wystarczającej\s+podstawy)",
+            stripped,
+            flags=re.IGNORECASE,
+        )
+        strong_done = re.search(r"status:\s*(completed|tested)\b", stripped, flags=re.IGNORECASE)
+
+        if negative_claim and strong_done:
+            bad_lines.append(stripped)
+
+    if bad_lines:
+        return [
+            "Sekcja pracy wykonanej oznacza negację lub brak potwierdzenia jako completed/tested: "
+            + " | ".join(bad_lines[:5])
+        ]
+
+    return []
+
+
+
+def strict_work_line_format_failures(daily_log: str) -> list[str]:
+    section = extract_markdown_section(daily_log, "## 2. Praca faktycznie wykonana")
+    if not section:
+        return []
+
+    allowed_statuses = r"(started|in progress|partially completed|tested|completed)"
+    allowed_confidence = r"(wysoka|średnia|niska)"
+
+    bad: list[str] = []
+    for line in section.splitlines():
+        stripped = line.strip()
+        if not stripped or not stripped.startswith(("-", "*")):
+            continue
+
+        strict_ok = re.search(
+            rf"—\s*status:\s*{allowed_statuses}\s*—\s*pewność:\s*{allowed_confidence}\s*$",
+            stripped,
+            flags=re.IGNORECASE,
+        )
+
+        embedded_status = re.search(
+            r"\((?:status:\s*)?(planned|completed|unknown|tested|in progress|partially completed|started)\)",
+            stripped,
+            flags=re.IGNORECASE,
+        )
+
+        if not strict_ok or embedded_status:
+            bad.append(stripped)
+
+    if bad:
+        return [
+            "Sekcja '## 2. Praca faktycznie wykonana' zawiera punkty bez ścisłego formatu "
+            "'— status: ... — pewność: ...' albo zawiera status w nawiasie: "
+            + " | ".join(bad[:8])
+        ]
+
+    return []
+
+
+def next_steps_status_marker_failures(daily_log: str) -> list[str]:
+    section = extract_markdown_section(daily_log, "## 6. Następne kroki")
+    if not section:
+        return []
+
+    bad: list[str] = []
+    for line in section.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith(("-", "*")):
+            continue
+
+        if re.search(
+            r"status:\s*(planned|completed|unknown|tested|in progress|partially completed|started)\b|\((planned|completed|unknown|tested|in progress|partially completed|started)\)",
+            stripped,
+            flags=re.IGNORECASE,
+        ):
+            bad.append(stripped)
+
+    if bad:
+        return [
+            "Sekcja '## 6. Następne kroki' zawiera metadane statusu. Następne kroki mają być zwykłymi punktami: "
+            + " | ".join(bad[:8])
+        ]
+
+    return []
+
+
+def artifact_section_format_failures(daily_log: str) -> list[str]:
+    section = extract_markdown_section(daily_log, "## 3. Artefakty utworzone lub zmodyfikowane")
+    if not section:
+        return []
+
+    bad: list[str] = []
+    for line in section.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith(("-", "*")):
+            continue
+
+        if re.search(r"nazwa\s+artefaktu\s*:|operacja\s*:\s*nieznana|status\s*:\s*unknown|pewność\s*:\s*niska", stripped, flags=re.IGNORECASE):
+            bad.append(stripped)
+
+    if bad:
+        return [
+            "Sekcja artefaktów zawiera niekanoniczny format, nieznaną operację, status unknown albo niską pewność: "
+            + " | ".join(bad[:8])
+        ]
+
+    return []
+
 def daily_log_quality_failures(daily_log: str, source_report: str) -> list[str]:
     failures = _base_daily_log_quality_failures(daily_log, source_report)
     failures.extend(repeated_line_failures(daily_log))
@@ -575,7 +786,12 @@ def daily_log_quality_failures(daily_log: str, source_report: str) -> list[str]:
     failures.extend(section_status_failures(daily_log))
     failures.extend(conversational_noise_failures(daily_log))
     failures.extend(required_daily_log_section_failures(daily_log))
+    failures.extend(strict_work_line_format_failures(daily_log))
+    failures.extend(next_steps_status_marker_failures(daily_log))
+    failures.extend(artifact_section_format_failures(daily_log))
     failures.extend(planned_status_anywhere_failures(daily_log))
+    failures.extend(wrong_day_completed_failures(daily_log))
+    failures.extend(negative_completed_status_failures(daily_log))
     failures.extend(workflow_metadata_noise_failures(daily_log))
     return failures
 
@@ -1174,11 +1390,16 @@ KONTEKST TECHNICZNY:
 - Etap 1 przetworzył {chunk_count} chunków.
 - {rough_note}
 
+KONTRAKT ETAPU 2 Z PLIKU:
+<<<PROMPT_ETAP2
+{prompt_etap2}
+PROMPT_ETAP2>>>
+
 ZASADY:
 - Nie wymyślaj działań, których nie ma w raporcie.
 - Nie pisz atrap ani pustych ramek.
 - Nie odsyłaj do plików zamiast pisać treść.
-- Nie wymyślaj folderów ani ścieżek. Ścieżkę lub folder wolno podać tylko wtedy, gdy występuje dosłownie w RAPORCIE POSTĘPÓW albo w mapie workflow.
+- Nie wymyślaj folderów ani ścieżek. Ścieżkę lub folder wolno podać tylko wtedy, gdy występuje dosłownie w RAPORCIE POSTĘPÓW, ROUGH_WORK albo w mapie workflow.
 - Jeżeli nie znasz lokalizacji pliku, wpisz: "lokalizacja niepotwierdzona w raporcie".
 - Rzeczy planowane wpisuj tylko jako planned w sekcji "## 6. Następne kroki" albo w sekcji niepewności. Nie wolno umieszczać statusu planned w sekcji "## 2. Praca faktycznie wykonana".
 - Nie dodawaj sekcji typu "Routing repozytoryjny", "placement", "Ruch artefaktów" ani "Zmiany commit-relevant".
@@ -1193,6 +1414,7 @@ ZASADY:
 - Gdy materiał jest skąpy, napisz krótki daily log i oznacz niepewności.
 - Pisz naturalnie po polsku.
 - Nie używaj słowa "ukończono", jeżeli raport tego jasno nie potwierdza.
+- Nie zapisuj statusów w nawiasach, np. "(planned)", "(completed)", "(unknown)". Używaj wyłącznie formatu "— status: ... — pewność: ...".
 - Nie wolno przepisywać instrukcji technicznych typu "To jest fragment..." jako treści daily loga.
 - Priorytet źródeł: RAPORT POSTĘPÓW > ROUGH_WORK > dokumenty sterujące. Dokumenty sterujące określają strukturę i routing, nie są dowodem, że coś wykonano.
 
@@ -1254,6 +1476,7 @@ def build_stage2_repair_prompt(
     quality_failures: list[str],
     chunk_count: int,
     rough_work_exists: bool,
+    rough_work: str = "",
 ) -> str:
     failure_text = "\n".join(f"- {failure}" for failure in quality_failures)
     rejected_excerpt = rejected_response.strip()[:5000]
@@ -1261,6 +1484,11 @@ def build_stage2_repair_prompt(
         "rough_work istnieje, ale używaj go tylko wtedy, gdy został jawnie podany w materiale."
         if rough_work_exists
         else "rough_work nie istnieje — nie twierdź, że był użyty."
+    )
+    rough_content = (
+        rough_work.strip()
+        if rough_work_exists and rough_work.strip()
+        else "[BRAK]"
     )
 
     return f"""Jesteś naprawczym etapem 2 pipeline'u dziennego.
@@ -1312,7 +1540,7 @@ Krótki opis pakietu i sposobu wygenerowania.
 
 REGUŁY:
 - Pisz po polsku.
-- Oprzyj się wyłącznie na RAPORCIE POSTĘPÓW.
+- Oprzyj się wyłącznie na RAPORCIE POSTĘPÓW oraz ROUGH_WORK, jeśli istnieje.
 - Jeżeli czegoś nie da się ustalić, oznacz to jako niepewność.
 - Każdy punkt pracy powinien mieć status i pewność, jeśli materiał na to pozwala.
 - W sekcji "## 2. Praca faktycznie wykonana" nie wolno umieszczać elementów ze statusem planned.
@@ -1321,20 +1549,29 @@ REGUŁY:
 - W sekcji "## 6. Następne kroki" zapisuj przyszłe działania jako zwykłe punkty bez frazy "status: planned".
 - Nie używaj w finalnym DAILY_LOG pól typu "Lokalizacja docelowa", "Uzasadnienie placementu", "Commit relevance", "Ruch", "Operacja", "**Status:**", "**Pewność:**".
 - Finalny DAILY_LOG musi zawierać dokładnie sześć standardowych nagłówków: "## 1. Zakres dnia", "## 2. Praca faktycznie wykonana", "## 3. Artefakty utworzone lub zmodyfikowane", "## 4. Decyzje operacyjne i metodologiczne", "## 5. Niepewności i nierozstrzygnięte punkty", "## 6. Następne kroki".
-- Nie wymieniaj artefaktów plikowych, których nie ma dosłownie w RAPORCIE POSTĘPÓW.
+- Nie wymieniaj artefaktów plikowych, których nie ma dosłownie w RAPORCIE POSTĘPÓW albo ROUGH_WORK.
 - Nie kopiuj fragmentów rozmowy typu "Pobierz, podmień", "uruchom ponownie", "Rozumiem i zgadzam się".
 - W sekcji "## 2. Praca faktycznie wykonana" nie wolno umieszczać elementów ze statusem planned.
 - Elementy planowane wolno umieszczać wyłącznie w sekcji "## 6. Następne kroki" albo w sekcji niepewności.
 - Nie wpisuj do DAILY_LOG fragmentów rozmowy typu "Pobierz, podmień", "uruchom ponownie", "Rozumiem i zgadzam się".
 - Nie kopiuj bezmyślnie poprzedniej odrzuconej odpowiedzi.
-- Nie wymieniaj artefaktów plikowych, których nie ma dosłownie w RAPORCIE POSTĘPÓW.
+- Nie wymieniaj artefaktów plikowych, których nie ma dosłownie w RAPORCIE POSTĘPÓW albo ROUGH_WORK.
 - Jeżeli poprzednia odpowiedź została odrzucona za planned w złej sekcji, przenieś te punkty do "## 6. Następne kroki" albo usuń je, jeśli są tylko instrukcją rozmowną.
 - Jeżeli poprzednia odpowiedź została odrzucona za śmieci konwersacyjne, usuń je całkowicie.
+- Jeżeli punkt zawiera "(planned)", "(completed)" albo "(unknown)", przepisz go do ścisłego formatu albo usuń, jeśli nie jest faktem wykonanym dzisiaj.
+- Zakazane w DAILY_LOG: status w nawiasie, np. "(status: in progress)", "(planned)", "(completed)".
+- Zakazane w sekcji artefaktów: "nazwa artefaktu:", "operacja: nieznana", "status: unknown", "pewność: niska".
+- Każdy punkt w sekcji "## 2. Praca faktycznie wykonana" musi kończyć się dokładnie formatem: "— status: ... — pewność: ...".
 - Nie dodawaj komentarza przed markerem ===DAILY_LOG_START===.
 - Nie dodawaj komentarza po markerze ===README_PL_END===.
 
 LICZBA CHUNKÓW ETAPU 1:
 {chunk_count}
+
+ROUGH_WORK:
+<<<ROUGH_WORK
+{rough_content}
+ROUGH_WORK>>>
 
 RAPORT POSTĘPÓW:
 <<<RAPORT_POSTEPOW
@@ -1398,6 +1635,17 @@ def main() -> int:
     rough_work_exists = rough_work_path is not None and rough_work_path.exists()
     rough_work = read_file_safe(rough_work_path, "rough_work", required=False) if rough_work_exists else ""
 
+    # Źródło dowodowe dla walidacji jakości etapu 2.
+    # Jeżeli rough_work istnieje, jest realnym źródłem pomocniczym dla etapu 2,
+    # więc walidator nie może sprawdzać artefaktów wyłącznie względem RAPORT_POSTEPOW.
+    stage2_evidence = raport_postepow
+    if rough_work:
+        stage2_evidence = (
+            raport_postepow
+            + "\n\n===== ROUGH_WORK USED BY STAGE 2 =====\n"
+            + rough_work
+        )
+
     print(f"[etap2] START: model={args.model}, ollama={args.ollama_url}")
     print("[etap2] Wersja: v7.6.9 prompt-isolation-repair-retry-section-quality-gates-deterministic-clean-fallback-raw-cache-audit")
     print(f"[etap2] Dzień: {day}, chunków: {args.chunk_count}")
@@ -1454,7 +1702,7 @@ def main() -> int:
         daily_log, readme = parse_ollama_response(response)
 
         stage2_mode = "MODEL_OUTPUT"
-        quality_failures = daily_log_quality_failures(daily_log, raport_postepow)
+        quality_failures = daily_log_quality_failures(daily_log, stage2_evidence)
         if quality_failures:
             print("[etap2] UWAGA: wynik modelu nie przeszedł bramki jakości.")
             for failure in quality_failures:
@@ -1485,7 +1733,7 @@ def main() -> int:
 
             if repair_response.strip():
                 repair_daily_log, repair_readme = parse_ollama_response(repair_response)
-                repair_quality_failures = daily_log_quality_failures(repair_daily_log, raport_postepow)
+                repair_quality_failures = daily_log_quality_failures(repair_daily_log, stage2_evidence)
             else:
                 repair_daily_log, repair_readme = "", ""
                 repair_quality_failures = ["retry naprawczy etapu 2 zwrócił pustą odpowiedź"]
@@ -1518,16 +1766,18 @@ def main() -> int:
                     raport_postepow_path=raport_postepow_path,
                 )
 
-                deterministic_quality_failures = daily_log_quality_failures(daily_log, raport_postepow)
+                deterministic_quality_failures = daily_log_quality_failures(daily_log, stage2_evidence)
 
                 if deterministic_quality_failures:
                     print("[etap2] Deterministyczny DAILY_LOG również nie przeszedł bramki jakości.")
                     for failure in deterministic_quality_failures:
                         print(f"[etap2] Powód odrzucenia deterministic output: {failure}")
-                    stage2_mode = "DETERMINISTIC_OUTPUT_FROM_RAPORT_POSTEPOW"
                 else:
-                    print("[etap2] Deterministyczny DAILY_LOG przeszedł bramkę jakości.")
-                    stage2_mode = "DETERMINISTIC_CLEAN_OUTPUT"
+                    print("[etap2] Deterministyczny DAILY_LOG przeszedł techniczną bramkę jakości, ale pozostaje trybem naprawczym do ręcznej kontroli.")
+
+                # Każdy fallback deterministyczny jest traktowany jako DO NAPRAWY.
+                # Nie wolno go przepuszczać jako finalnie poprawnego DAILY_LOG bez ręcznej kontroli.
+                stage2_mode = "DETERMINISTIC_OUTPUT_FROM_RAPORT_POSTEPOW"
 
     if not readme or looks_like_bad_readme(readme):
         readme = default_readme(
@@ -1590,7 +1840,7 @@ def main() -> int:
     print(f"[etap2] DAILY_LOG zapisany: {daily_log_path}")
     print(f"[etap2] MERGED_SOURCES zapisany: {merged_path}")
     print(f"[etap2] README_PL zapisany: {readme_path}")
-    print(f"[etap2] KONIEC: etap 2 zakończony sukcesem.")
+    print(f"[etap2] KONIEC: etap 2 zakończony technicznie.")
     return 0
 
 

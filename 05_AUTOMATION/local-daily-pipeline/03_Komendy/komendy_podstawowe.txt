@@ -83,13 +83,13 @@ P2="$BASE/09_Prompty/generator_dokumentacji_dnia_v2.txt"
 ## 6. Uruchomienie pipeline’u
 
 ```bash
-bash "/mnt/c/Users/aleks/Documents/prompt-systems-lab/05_AUTOMATION/local-daily-pipeline/05_AUTOMATION/local-daily-pipeline/run_daily_pipeline.sh" 2026-04-25 20000 2000
+cd "/mnt/c/Users/aleks/Documents/prompt-systems-lab/05_AUTOMATION/local-daily-pipeline" && bash ./run_daily_pipeline.sh 2026-04-25 8000 800
 ```
 
 Znaczenie parametrów:
 - `2026-04-25` — dzień do przetworzenia,
-- `20000` — chunk size, czyli rozmiar jednego kawałka tekstu,
-- `2000` — overlap, czyli zakładka między chunkami.
+- `8000` — chunk size, czyli rozmiar jednego kawałka tekstu,
+- `800` — overlap, czyli zakładka między chunkami.
 
 Nie ustawiaj overlap większego lub równego chunk size.
 
@@ -166,7 +166,7 @@ find "$BASE/12_Backups/03_STAGE1_CACHE" -type f | head
 
 ## 13. Wersja v7.1
 
-v7.1 to bezpieczna wersja po rollbacku z v8.
+Aktualny przebieg lokalny używa etapu 1 v7.4.1 oraz etapu 2 v7.6.9. Starsze wzmianki o v7.1 traktuj jako historyczne.
 
 Sprawdzenie, czy uruchamia się właściwa wersja:
 
@@ -178,6 +178,21 @@ grep -n "Wersja:" "/tmp/run_daily_pipeline_stage2_2026-04-25.log" || true
 Oczekiwane fragmenty:
 
 ```text
-v7.1 short-extraction-cache-safe
-v7.1 optimized-stage1-full-stage2-safe
+v7.4.1 source-bound-extraction-format-gate-prompt-file-cache-raw-audit
+v7.6.9 prompt-isolation-repair-retry-section-quality-gates-deterministic-clean-fallback-raw-cache-audit
 ```
+
+
+## FACT_LEDGER — warstwa pośrednia
+
+Od wersji v7.7 pipeline tworzy warstwę pośrednią:
+
+```text
+RAPORT_POSTEPOW_YYYY-MM-DD.md
++ optional rough_work_YYYY-MM-DD.md
+→ FACT_LEDGER_YYYY-MM-DD.jsonl
+→ DAILY_LOG_YYYY-MM-DD.md
+```
+
+`FACT_LEDGER` jest kanonicznym rejestrem zaakceptowanych faktów.
+Jeżeli fakt nie trafia do `FACT_LEDGER`, nie powinien trafić do finalnego `DAILY_LOG`.

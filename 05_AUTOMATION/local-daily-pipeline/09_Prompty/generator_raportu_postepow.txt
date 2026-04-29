@@ -76,6 +76,13 @@ Use certainty levels for meaningful claims:
 
 If certainty is low, especially for completion, placement, stabilization, or commit relevance, default to the weaker claim.
 
+
+DATE ISOLATION RULE
+The report is for the target DAY only.
+If the source mentions another date, for example 2026-04-25, treat it as historical context unless the source clearly says that the action was performed today.
+Do not classify work from another explicit date as today's completed, tested, or in-progress work.
+If historical context is relevant, put it in uncertainty or context, not in "Praca faktycznie wykonana".
+
 SCOPE LOCK
 Focus only on today's work that is relevant to daily_log preparation, especially:
 - real actions performed,

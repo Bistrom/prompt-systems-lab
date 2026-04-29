@@ -140,6 +140,17 @@ README pakietu dziennego:
 
 `README_PL_YYYY-MM-DD.txt`
 
+
+#### `12_Backups/04 FACT_LEDGER/`
+
+Kanoniczny rejestr faktów dnia:
+
+- `FACT_LEDGER_YYYY-MM-DD.jsonl`
+- `FACT_LEDGER_REJECTED_YYYY-MM-DD.md`
+
+`FACT_LEDGER` jest warstwą pośrednią między `RAPORT_POSTEPOW` a `DAILY_LOG`.
+Finalny `DAILY_LOG` powinien być renderowany z zaakceptowanych faktów, a nie bezpośrednio z chaotycznego raportu postępów.
+
 ## 3. Reguły pipeline’u dziennego
 
 Pipeline wykonuje przepływ:
@@ -150,8 +161,10 @@ Pipeline wykonuje przepływ:
 → chunk_chat_export.py
 → ollama_stage1.py
 → merge_partial_reports.py
-→ ollama_stage2.py
+→ normalize_daily_facts.py
+→ render_daily_log.py
 → validate_merged_sources.py
+→ validate_daily_quality.py
 → dystrybucja plików
 ```
 

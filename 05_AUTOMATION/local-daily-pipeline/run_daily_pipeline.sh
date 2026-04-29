@@ -36,6 +36,8 @@ CHUNK_SCRIPT="$PROJECT_ROOT/chunk_chat_export.py"
 MERGE_SCRIPT="$PROJECT_ROOT/merge_partial_reports.py"
 OLLAMA_STAGE1_SCRIPT="$PROJECT_ROOT/ollama_stage1.py"
 OLLAMA_STAGE2_SCRIPT="$PROJECT_ROOT/ollama_stage2.py"
+FACT_NORMALIZER_SCRIPT="$PROJECT_ROOT/normalize_daily_facts.py"
+DAILY_RENDERER_SCRIPT="$PROJECT_ROOT/render_daily_log.py"
 STAGE1_CACHE_DIR="$PROJECT_ROOT/12_Backups/03_STAGE1_CACHE"
 
 # Parametry chunkingu
@@ -58,6 +60,7 @@ DIR_DAILY_LOG_FIX="$PROJECT_ROOT/07_Daily_Logs/02_Do_Naprawy"
 DIR_RAPORT="$PROJECT_ROOT/08_Raporty_Postepow"
 DIR_MERGED="$PROJECT_ROOT/12_Backups/01 MERGED_SOURCES"
 DIR_README="$PROJECT_ROOT/12_Backups/02 README_PL"
+DIR_FACT_LEDGER="$PROJECT_ROOT/12_Backups/04 FACT_LEDGER"
 
 log() {
   printf '[INFO] %s\n' "$1"
@@ -140,6 +143,10 @@ MERGED_SOURCES="$OUTPUT_DIR/MERGED_SOURCES_${DAY}.txt"
 README_PL="$OUTPUT_DIR/README_PL.txt"
 STAGE1_AUDIT_DIR="$OUTPUT_DIR/stage1_audit"
 STAGE1_QUALITY_MANIFEST="$STAGE1_AUDIT_DIR/stage1_quality_manifest.json"
+FACT_LEDGER="$OUTPUT_DIR/FACT_LEDGER_${DAY}.jsonl"
+FACT_LEDGER_RAW="$OUTPUT_DIR/FACT_LEDGER_RAW_${DAY}.jsonl"
+FACT_LEDGER_REPAIR_AUDIT="$OUTPUT_DIR/FACT_LEDGER_REPAIR_AUDIT_${DAY}.txt"
+FACT_LEDGER_REJECTED="$OUTPUT_DIR/FACT_LEDGER_REJECTED_${DAY}.md"
 
 CHUNK_DIR="/tmp/chunks_${DAY}"
 PARTIAL_DIR="/tmp/partial_reports_${DAY}"
@@ -169,6 +176,8 @@ require_file "$CHUNK_SCRIPT" "chunk_chat_export.py"
 require_file "$MERGE_SCRIPT" "merge_partial_reports.py"
 require_file "$OLLAMA_STAGE1_SCRIPT" "ollama_stage1.py"
 require_file "$OLLAMA_STAGE2_SCRIPT" "ollama_stage2.py"
+require_file "$FACT_NORMALIZER_SCRIPT" "normalize_daily_facts.py"
+require_file "$DAILY_RENDERER_SCRIPT" "render_daily_log.py"
 
 # Sprawdź czy Ollama odpowiada.
 curl -sf "$OLLAMA_URL/api/tags" >/dev/null 2>&1 || \
@@ -184,10 +193,25 @@ if [ -f "$ROUGH_WORK" ]; then
 fi
 
 mkdir -p "$OUTPUT_DIR"
+
+# v7.7.1: czyszczenie outputów bieżącego runu przed startem
+# Usuwamy tylko pliki wygenerowane dla aktualnej daty w katalogu roboczym runu.
+# Nie ruszamy cache etapu 1.
+rm -f "$OUTPUT_DIR/DAILY_LOG_${DAY}.md" \
+      "$OUTPUT_DIR/RAPORT_POSTEPOW_${DAY}.md" \
+      "$OUTPUT_DIR/MERGED_SOURCES_${DAY}.txt" \
+      "$OUTPUT_DIR/README_PL.txt" \
+      "$OUTPUT_DIR/RAW_STAGE2_RESPONSE_${DAY}.txt" \
+      "$OUTPUT_DIR/RAW_STAGE2_REPAIR_RESPONSE_${DAY}.txt" \
+      "$OUTPUT_DIR/FACT_LEDGER_${DAY}.jsonl" \
+      "$OUTPUT_DIR/FACT_LEDGER_RAW_${DAY}.jsonl" \
+      "$OUTPUT_DIR/FACT_LEDGER_REJECTED_${DAY}.md" \
+      "$OUTPUT_DIR/FACT_LEDGER_REPAIR_AUDIT_${DAY}.txt"
+rm -rf "$OUTPUT_DIR/stage1_audit"
 mkdir -p "$STAGE1_CACHE_DIR"
 
 # Czyścimy pliki wyjściowe dla tego dnia, żeby ponowny test nie czytał starych artefaktów.
-rm -f "$RAPORT_POSTEPOW" "$DAILY_LOG" "$MERGED_SOURCES" "$README_PL" "$OUTPUT_DIR/RAW_STAGE2_RESPONSE_${DAY}.txt"
+rm -f "$RAPORT_POSTEPOW" "$DAILY_LOG" "$MERGED_SOURCES" "$README_PL" "$FACT_LEDGER" "$FACT_LEDGER_REJECTED" "$OUTPUT_DIR/RAW_STAGE2_RESPONSE_${DAY}.txt"
 rm -rf "$STAGE1_AUDIT_DIR"
 mkdir -p "$STAGE1_AUDIT_DIR"
 
@@ -249,12 +273,43 @@ python3 "$MERGE_SCRIPT" \
 [ -s "$RAPORT_POSTEPOW" ] || die "Scalanie nie utworzyło raportu: $RAPORT_POSTEPOW"
 log "Scalanie OK — raport postępów gotowy (scalony z $CHUNK_COUNT chunków)"
 
-# ─── Etap 2: Ollama tworzy finalną dokumentację ──────────────────────────────
+# ─── Etap 1.5: normalizacja faktów ───────────────────────────────────────────
 
-log "Etap 2: start (Ollama, lokalnie)"
+log "Etap 1.5: normalizacja faktów do FACT_LEDGER"
 
-python3 "$OLLAMA_STAGE2_SCRIPT" \
+python3 "$FACT_NORMALIZER_SCRIPT" \
   --day "$DAY" \
+  --raport-postepow "$RAPORT_POSTEPOW" \
+  "${ROUGH_WORK_ARGS[@]}" \
+  --output "$FACT_LEDGER_RAW" \
+  --rejected-output "$FACT_LEDGER_REJECTED"
+
+[ -s "$FACT_LEDGER_RAW" ] || die "Normalizacja faktów nie utworzyła FACT_LEDGER_RAW: $FACT_LEDGER_RAW"
+[ -s "$FACT_LEDGER_REJECTED" ] || die "Normalizacja faktów nie utworzyła FACT_LEDGER_REJECTED: $FACT_LEDGER_REJECTED"
+
+log "Etap 1.5a: naprawa FACT_LEDGER_RAW do finalnego FACT_LEDGER"
+python3 "$PROJECT_ROOT/repair_fact_ledger.py" \
+  --input "$FACT_LEDGER_RAW" \
+  --output "$FACT_LEDGER" \
+  --audit "$FACT_LEDGER_REPAIR_AUDIT"
+
+[ -s "$FACT_LEDGER" ] || die "Naprawa faktów nie utworzyła finalnego FACT_LEDGER: $FACT_LEDGER"
+[ -s "$FACT_LEDGER_REPAIR_AUDIT" ] || die "Audyt naprawy FACT_LEDGER nie powstał albo jest pusty: $FACT_LEDGER_REPAIR_AUDIT"
+
+log "Etap 1.5a OK — finalny FACT_LEDGER gotowy"
+[ -s "$FACT_LEDGER_REJECTED" ] || die "Normalizacja faktów nie utworzyła pliku rejected: $FACT_LEDGER_REJECTED"
+
+
+log "Etap 1.5 OK — FACT_LEDGER gotowy"
+
+# ─── Etap 2: deterministyczny render z FACT_LEDGER ───────────────────────────
+
+log "Etap 2: render DAILY_LOG z FACT_LEDGER"
+
+python3 "$DAILY_RENDERER_SCRIPT" \
+  --day "$DAY" \
+  --fact-ledger "$FACT_LEDGER" \
+  --fact-ledger-rejected "$FACT_LEDGER_REJECTED" \
   --raport-postepow "$RAPORT_POSTEPOW" \
   --chat-export "$CHAT_EXPORT" \
   --workflow-map "$WORKFLOW_MAP" \
@@ -264,15 +319,10 @@ python3 "$OLLAMA_STAGE2_SCRIPT" \
   --stage1-quality-manifest "$STAGE1_QUALITY_MANIFEST" \
   --output-dir "$OUTPUT_DIR" \
   --chunk-count "$CHUNK_COUNT" \
-  "${ROUGH_WORK_ARGS[@]}" \
-  --model "$OLLAMA_MODEL" \
-  --ollama-url "$OLLAMA_URL" \
-  2>&1 | tee "/tmp/run_daily_pipeline_stage2_${DAY}.log" || {
-  die "Etap 2 (Ollama) zakończył się błędem — sprawdź: /tmp/run_daily_pipeline_stage2_${DAY}.log"
-}
+  "${ROUGH_WORK_ARGS[@]}"
 
-for output_file in "$DAILY_LOG" "$MERGED_SOURCES" "$README_PL"; do
-  [ -s "$output_file" ] || die "Etap 2 nie utworzył wymaganego pliku: $output_file"
+for output_file in "$DAILY_LOG" "$MERGED_SOURCES" "$README_PL" "$FACT_LEDGER" "$FACT_LEDGER_REJECTED"; do
+  [ -s "$output_file" ] || die "Etap 2 / FACT_LEDGER nie utworzył wymaganego pliku: $output_file"
 done
 log "Etap 2 OK"
 
@@ -298,10 +348,33 @@ if grep -Eiq '^[[:space:]]*\[Here is the content[^]]*\][[:space:]]*$|^[[:space:]
   log "DAILY_LOG zawiera realną atrapę albo samodzielny marker techniczny — nie zostanie uznany za poprawny."
 fi
 
-if grep -Eq "STAGE2_MODE: (FALLBACK|DETERMINISTIC_FROM_RAPORT_POSTEPOW|DETERMINISTIC_OUTPUT_FROM_RAPORT_POSTEPOW|DIAGNOSTIC_FROM_STAGE1_WARNINGS|DIAGNOSTIC_FROM_STAGE2_REJECTION)" "$MERGED_SOURCES"; then
-  DAILY_LOG_QUALITY_OK="NO"
-  log "Etap 2 użył trybu naprawczego/diagnostycznego — DAILY_LOG trafi do 02_Do_Naprawy do ręcznego przeglądu."
-fi
+STAGE2_MODE_CURRENT="$(
+  awk '
+    /^SOURCE_MANIFEST$/ {in_manifest=1; next}
+    /^END_SOURCE_MANIFEST$/ {in_manifest=0}
+    in_manifest && /^STAGE2_MODE:/ {
+      sub(/^STAGE2_MODE:[[:space:]]*/, "", $0)
+      print $0
+      exit
+    }
+  ' "$MERGED_SOURCES"
+)"
+
+log "Tryb etapu 2 z SOURCE_MANIFEST: ${STAGE2_MODE_CURRENT:-BRAK}"
+
+case "$STAGE2_MODE_CURRENT" in
+  FALLBACK|DETERMINISTIC_FROM_RAPORT_POSTEPOW|DETERMINISTIC_OUTPUT_FROM_RAPORT_POSTEPOW|DETERMINISTIC_CLEAN_OUTPUT|DIAGNOSTIC_FROM_STAGE1_WARNINGS|DIAGNOSTIC_FROM_STAGE2_REJECTION)
+    DAILY_LOG_QUALITY_OK="NO"
+    log "Etap 2 użył trybu fallback/diagnostycznego z SOURCE_MANIFEST — DAILY_LOG trafi do 02_Do_Naprawy do ręcznego przeglądu."
+    ;;
+  MODEL_OUTPUT|MODEL_OUTPUT_REPAIRED|FACT_LEDGER_RENDERED)
+    log "Etap 2 zwrócił akceptowalny tryb modelowy: $STAGE2_MODE_CURRENT"
+    ;;
+  *)
+    DAILY_LOG_QUALITY_OK="NO"
+    log "Nieznany albo brakujący STAGE2_MODE w SOURCE_MANIFEST — DAILY_LOG trafi do 02_Do_Naprawy."
+    ;;
+esac
 
 if [ "$DAILY_LOG_QUALITY_OK" = "YES" ]; then
   log "Walidacja jakości DAILY_LOG OK"
@@ -369,6 +442,7 @@ mkdir -p "$DIR_DAILY_LOG_FIX"
 mkdir -p "$DIR_RAPORT"
 mkdir -p "$DIR_MERGED"
 mkdir -p "$DIR_README"
+mkdir -p "$DIR_FACT_LEDGER"
 
 cp "$RAPORT_POSTEPOW" "$DIR_RAPORT/RAPORT_POSTEPOW_${DAY}.md"
 log "Skopiowano: RAPORT_POSTEPOW → 08_Raporty_Postepow"
@@ -379,6 +453,10 @@ log "Skopiowano: MERGED_SOURCES → 12_Backups/01 MERGED_SOURCES"
 cp "$README_PL" "$DIR_README/README_PL_${DAY}.txt"
 log "Skopiowano: README_PL → 12_Backups/02 README_PL"
 
+cp "$FACT_LEDGER" "$DIR_FACT_LEDGER/FACT_LEDGER_${DAY}.jsonl"
+cp "$FACT_LEDGER_REJECTED" "$DIR_FACT_LEDGER/FACT_LEDGER_REJECTED_${DAY}.md"
+log "Skopiowano: FACT_LEDGER → 12_Backups/04 FACT_LEDGER"
+
 if [ "$VALIDATION_OK" = "YES" ] && [ "$DAILY_LOG_QUALITY_OK" = "YES" ]; then
   cp "$DAILY_LOG" "$DIR_DAILY_LOG_OK/DAILY_LOG_${DAY}.md"
   rm -f "$DIR_DAILY_LOG_FIX/DAILY_LOG_${DAY}.md"
@@ -386,35 +464,88 @@ if [ "$VALIDATION_OK" = "YES" ] && [ "$DAILY_LOG_QUALITY_OK" = "YES" ]; then
   log "Usunięto ewentualną starszą wersję z 07_Daily_Logs/02_Do_Naprawy"
 else
   cp "$DAILY_LOG" "$DIR_DAILY_LOG_FIX/DAILY_LOG_${DAY}.md"
-  rm -f "$DIR_DAILY_LOG_OK/DAILY_LOG_${DAY}.md"
   log "Skopiowano: DAILY_LOG → 07_Daily_Logs/02_Do_Naprawy"
-  log "Usunięto ewentualną starszą wersję z 07_Daily_Logs/01_Poprawne"
+  if [ -f "$DIR_DAILY_LOG_OK/DAILY_LOG_${DAY}.md" ]; then
+    log "Pozostawiono istniejącą starszą wersję z 07_Daily_Logs/01_Poprawne; nieudany rerun nie kasuje ostatniego poprawnego wyniku."
+  fi
 fi
 
 log "Dystrybucja OK"
 
-# ─── Podsumowanie ─────────────────────────────────────────────────────────────
+# v7.7.2: finalna bramka spójności po dystrybucji
+# Cel:
+# - nie wolno kończyć sukcesem, jeśli finalne artefakty nie przechodzą walidacji;
+# - nie wolno zostawiać poprawnego DAILY_LOG jednocześnie w 01_Poprawne i 02_Do_Naprawy;
+# - tryb DO NAPRAWY musi kończyć się kodem niezerowym.
 
-log "Pliki robocze (06_Materialy_testowe):"
-printf '  %s\n' "$RAPORT_POSTEPOW"
-printf '  %s\n' "$DAILY_LOG"
-printf '  %s\n' "$MERGED_SOURCES"
-printf '  %s\n' "$README_PL"
+FINAL_OK_DAILY="$PROJECT_ROOT/07_Daily_Logs/01_Poprawne/DAILY_LOG_${DAY}.md"
+FINAL_REPAIR_DAILY="$PROJECT_ROOT/07_Daily_Logs/02_Do_Naprawy/DAILY_LOG_${DAY}.md"
+FINAL_RAPORT="$PROJECT_ROOT/08_Raporty_Postepow/RAPORT_POSTEPOW_${DAY}.md"
+FINAL_MERGED="$PROJECT_ROOT/12_Backups/01 MERGED_SOURCES/MERGED_SOURCES_${DAY}.txt"
+FINAL_LEDGER="$PROJECT_ROOT/12_Backups/04 FACT_LEDGER/FACT_LEDGER_${DAY}.jsonl"
+FINAL_VALIDATE_LOG="/tmp/run_daily_pipeline_final_validate_${DAY}.log"
 
-log "Pliki docelowe:"
-printf '  %s\n' "$DIR_RAPORT/RAPORT_POSTEPOW_${DAY}.md"
-if [ "$VALIDATION_OK" = "YES" ] && [ "$DAILY_LOG_QUALITY_OK" = "YES" ]; then
-  printf '  %s\n' "$DIR_DAILY_LOG_OK/DAILY_LOG_${DAY}.md"
-else
-  printf '  %s\n' "$DIR_DAILY_LOG_FIX/DAILY_LOG_${DAY}.md"
+log "Finalna bramka spójności po dystrybucji: start"
+
+FINAL_GATE_OK="YES"
+
+# v7.7.3: bieżący run musi mieć poprawną walidację przed finalnym sukcesem
+# Sama obecność starego poprawnego pliku w 01_Poprawne nie może maskować błędu bieżącego runu.
+if [ "${VALIDATION_OK:-NO}" != "YES" ] || [ "${DAILY_LOG_QUALITY_OK:-NO}" != "YES" ]; then
+  FINAL_GATE_OK="NO"
+  echo "[FINAL_GATE_ERROR] Bieżący run nie przeszedł wcześniejszej walidacji: VALIDATION_OK=${VALIDATION_OK:-unset}, DAILY_LOG_QUALITY_OK=${DAILY_LOG_QUALITY_OK:-unset}" | tee -a "$FINAL_VALIDATE_LOG"
 fi
-printf '  %s\n' "$DIR_MERGED/MERGED_SOURCES_${DAY}.txt"
-printf '  %s\n' "$DIR_README/README_PL_${DAY}.txt"
 
-if [ "$VALIDATION_OK" = "YES" ] && [ "$DAILY_LOG_QUALITY_OK" = "YES" ]; then
-  log "KONIEC: run_daily_pipeline.sh dla dnia $DAY — sukces"
-else
-  log "KONIEC: run_daily_pipeline.sh dla dnia $DAY — zakończono z wynikiem DO NAPRAWY"
+for final_file in "$FINAL_OK_DAILY" "$FINAL_RAPORT" "$FINAL_MERGED" "$FINAL_LEDGER"; do
+  if [ ! -s "$final_file" ]; then
+    FINAL_GATE_OK="NO"
+    echo "[FINAL_GATE_ERROR] Brak albo pusty finalny plik: $final_file" | tee -a "$FINAL_VALIDATE_LOG"
+  fi
+done
+
+if [ "$FINAL_GATE_OK" = "YES" ]; then
+  if ! python3 "$PROJECT_ROOT/validate_merged_sources.py" \
+    --merged "$FINAL_MERGED" >> "$FINAL_VALIDATE_LOG" 2>&1
+  then
+    FINAL_GATE_OK="NO"
+    echo "[FINAL_GATE_ERROR] Finalny MERGED_SOURCES nie przeszedł walidacji" | tee -a "$FINAL_VALIDATE_LOG"
+  fi
 fi
 
-exit 0
+if [ "$FINAL_GATE_OK" = "YES" ]; then
+  if ! python3 "$PROJECT_ROOT/validate_daily_quality.py" \
+    --day "$DAY" \
+    --daily-log "$FINAL_OK_DAILY" \
+    --raport-postepow "$FINAL_RAPORT" \
+    --merged "$FINAL_MERGED" \
+    --fact-ledger "$FINAL_LEDGER" >> "$FINAL_VALIDATE_LOG" 2>&1
+  then
+    FINAL_GATE_OK="NO"
+    echo "[FINAL_GATE_ERROR] Finalny DAILY_LOG nie przeszedł walidacji z finalnym FACT_LEDGER" | tee -a "$FINAL_VALIDATE_LOG"
+  fi
+fi
+
+if [ "$FINAL_GATE_OK" = "YES" ]; then
+  if grep -nE "STAGE2_MODE: MODEL_OUTPUT|2026-04-25|2099-01-01|status: planned|Brak wystarczającej podstawy|wymaga jeszcze ręcznego przeglądu|może nie zawierać pełnego opisu|\(planned\)|\(completed\)|\(unknown\)|\(status:|operacja: nieznana|pewność: niska|nazwa artefaktu:|^- (Nie odrzucał|^- Używał|^- Nie traktował|^- Wykrywał|^- Wzmacniał|^- Wielodniowego|^- Statusów|^- Starych dat|^- Niekanonicznych|^- Metadanych)" "$FINAL_OK_DAILY" >> "$FINAL_VALIDATE_LOG" 2>&1
+  then
+    FINAL_GATE_OK="NO"
+    echo "[FINAL_GATE_ERROR] Finalny DAILY_LOG zawiera czerwone flagi" | tee -a "$FINAL_VALIDATE_LOG"
+  fi
+fi
+
+if [ "$FINAL_GATE_OK" = "YES" ]; then
+  rm -f "$FINAL_REPAIR_DAILY"
+  log "Finalna bramka spójności po dystrybucji: OK"
+  log "Usunięto ewentualną starszą wersję z 07_Daily_Logs/02_Do_Naprawy"
+  log "KONIEC: run_daily_pipeline.sh dla dnia ${DAY} — sukces"
+  exit 0
+else
+  mkdir -p "$PROJECT_ROOT/07_Daily_Logs/02_Do_Naprawy"
+  if [ -s "$DAILY_LOG" ]; then
+    cp "$DAILY_LOG" "$FINAL_REPAIR_DAILY"
+  fi
+  log "Finalna bramka spójności po dystrybucji: NIE"
+  log "Szczegóły walidacji: $FINAL_VALIDATE_LOG"
+  log "KONIEC: run_daily_pipeline.sh dla dnia ${DAY} — zakończono z wynikiem DO NAPRAWY"
+  exit 2
+fi
